@@ -30,3 +30,18 @@
     execution\
 -   **JIT compilation** is a hybrid: starts fast, and optimizes
     frequently used code into machine code during execution
+
+
+## Javascript RUNTIME in Browsers
+- JavaScript Engine - Without a Engine, there is no runtime
+- Even with the Engine, its not enough because we need the WEB APIs (DOM, TIMERS, FETCH API, ...)
+- WEB APIs = Functionalities provided to the engine, accessible on window object
+- CALLBACK QUEUE (CLICK, TIMER, DATA) : EXAMPLE of 'click', which is callback function from DOM Event Listener
+
+## CALL STACK :
+- The 'Call Stack' is a data structure (a stack: last in, first out) that keeps track of which functions are running and where to return after each function finishes.
+
+
+## JavaScript RUNTIME outside Browsers (node.js)
+- pretty similar but without the WEB APIs, because it's the browser who is providing these APIs
+- we have multiple C++ Bindings & Thread Pool
