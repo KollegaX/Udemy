@@ -1,0 +1,32 @@
+# Compilation vs Interpretation vs JIT
+
+## Compilation
+
+-   Entire code is converted into machine code at once
+-   Written to a binary file that can be executed by a computer
+
+## Interpretation
+
+-   Interpreter runs through the source code
+-   Executes it line by line
+
+## Just-In-Time (JIT) Compilation
+
+-   Hybrid approach
+-   Your code starts running right away (like interpreted code)
+-   While running, the engine watches which parts of the code are used
+    the most
+-   It compiles those "hot" parts into fast machine code on the fly
+-   So, JIT = "compile just in time when needed."
+
+------------------------------------------------------------------------
+
+## Key Differences
+
+-   **Interpreted languages** (like classic JavaScript, Python) normally
+    run line by line → quick startup, slower execution\
+-   **Compiled languages** (like C, C++) are turned into machine code
+    ahead of time → slower startup (compilation needed), but much faster
+    execution\
+-   **JIT compilation** is a hybrid: starts fast, and optimizes
+    frequently used code into machine code during execution
