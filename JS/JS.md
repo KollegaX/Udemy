@@ -101,7 +101,7 @@
 ## Scoping 
 - How our program's variables are organized and accessed. "Where do variables live?" or "Where can we access a certain variable, and where not?"
 
-# #Lexical Scoping
+## Lexical Scoping
 - Scoping is controlled by placement of functions and blocks in the code;
 
 ## Scope 
