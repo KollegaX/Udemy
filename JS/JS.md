@@ -126,3 +126,20 @@ Global scope; Function scope/Local scope; Block scope (ES6)
 - The scope chain in a certain scope is equal to adding together all the variable environments of all the parent scopes.
 - The scope chain has nothing to do with the order in which functions were called. It does not affect the scope chain at all!
 
+
+
+------------------------------------------------------------------------
+
+# Dot notation vs Bracket notation
+In JavaScript, there are two main ways to access object properties:
+Dot notation: obj.prop
+Accesses the property literally named "prop" on the object.
+Cannot use a variable to dynamically select the property.
+
+Bracket notation: obj[propName]
+Accesses the property whose name is the value of propName.
+Allows dynamic property access.
+
+
+------------------------------------------------------------------------
+
