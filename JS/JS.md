@@ -143,3 +143,34 @@ Allows dynamic property access.
 
 ------------------------------------------------------------------------
 
+# Preventing NaN with Default Values (|| 0) (focuses on the problem/solution)
+- Using || 0 to Provide Default Values in JavaScript (clear and descriptive)
+- Handling Undefined Properties Safely in JavaScript (slightly broader context)
+- JavaScript Tip: Defaulting Undefined Values to Zero (friendly/tip-like style)
+``` js
+// An object with star counts for different ranks:
+const rankStars = { admin: 3, mod: 2 };
+const userRank = 'guest'; // 'guest' does not exist in rankStars
+
+// Accessing a non-existent key returns undefined:
+console.log(rankStars[userRank]);
+// Output: undefined
+
+// In a for-loop, undefined isn’t a problem—i < undefined evaluates to false,
+// so the loop simply won't run. But using undefined in calculations can cause NaN:
+const starsRaw = rankStars[userRank];
+console.log(starsRaw + 2);
+// NaN (because undefined + a number is not valid)
+
+// To avoid this, provide a default value using || 0:
+const stars = rankStars[userRank] || 0;
+console.log(stars + 2);
+// 2 (works correctly because || 0 replaces undefined with 0)
+```
+
+🔹 **Explanation:**\
+- `rankStars[userRank]` is `undefined` when the key doesn't exist.\
+- The `|| 0` operator ensures a default value of `0`, preventing `NaN`
+in further calculations.\
+- This pattern is useful not just in loops but anywhere you might access
+properties that may not exist.
