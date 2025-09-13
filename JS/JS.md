@@ -174,3 +174,101 @@ console.log(stars + 2);
 in further calculations.\
 - This pattern is useful not just in loops but anywhere you might access
 properties that may not exist.
+
+
+
+
+
+# Understanding `this` in JavaScript 
+## 1. Strict Mode and `this`
+
+- **Strict mode** (`"use strict";`) is a stricter variant of JavaScript that catches common bugs.
+
+- **Effect on `this` in simple function calls:**
+
+| Mode           | `this` inside a simple function call (`func()`)  |
+|----------------|--------------------------------------------------|
+| Non-strict     | Points to the global object (`window` or `global`) |
+| Strict mode    | `undefined`                                      |
+
+
+
+## 2. Method Call (`obj.method()`)
+
+- When a function is called as a **method of an object**, `this` refers to the **object owning the method**.
+
+```js
+const obj = {
+  name: "Alice",
+  greet() {
+    console.log(this.name);
+  }
+};
+
+obj.greet(); // Logs: "Alice"
+```
+
+## 3. Simple Function Call (func())
+- Calling a function without an object context.
+```js
+function showThis() {
+  console.log(this);
+}
+
+showThis();
+```
+Behavior :
+| **Mode**        | **`this` inside function call**       |
+|-----------------|---------------------------------------|
+| Non-strict      | Global object (`window` or `global`)  |
+| Strict mode     | `undefined`                           |
+
+
+
+## 4. Arrow Functions
+- Arrow functions do NOT have their own this.
+- Instead, this is lexically inherited from the surrounding (parent) scope.
+```js
+const obj = {
+  name: "Bob",
+  greet: () => {
+    console.log(this.name);
+  }
+};
+
+obj.greet(); // Usually undefined or global `this.name`
+```
+- This means arrow functions don’t bind this to the object, even if called as a method.
+
+
+## 5. Event Listeners and this
+- When using a regular function as an event handler, this points to the element that the listener is attached to:
+```js
+button.addEventListener("click", function() {
+  console.log(this); // Logs the button element
+});
+```
+
+- When using an arrow function, this is inherited from the outer scope, NOT the element:
+```js
+button.addEventListener("click", () => {
+  console.log(this); // Not the button, likely window or undefined
+});
+```
+
+- Alternative way to get the element inside any handler:
+```js
+button.addEventListener("click", (event) => {
+  console.log(event.target); // Always the element clicked
+});
+```
+
+
+| **Context**                       | **`this` value**                                |
+|----------------------------------|--------------------------------------------------|
+| Method call (`obj.method()`)     | The object (`obj`)                              |
+| Simple function (non-strict)     | Global object (`window` or `global`)            |
+| Simple function (strict)         | `undefined`                                     |
+| Arrow function                   | Lexical `this` from surrounding scope           |
+| Event listener (regular func)    | The element the listener is attached to         |
+| Event listener (arrow func)      | Lexical `this` from surrounding scope           |
