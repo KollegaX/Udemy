@@ -272,3 +272,147 @@ button.addEventListener("click", (event) => {
 | Arrow function                   | Lexical `this` from surrounding scope           |
 | Event listener (regular func)    | The element the listener is attached to         |
 | Event listener (arrow func)      | Lexical `this` from surrounding scope           |
+
+
+
+# 🧠 Memory Management: Primitives vs Objects in JavaScript
+
+## 📌 How and Where Are Variables Created in JavaScript?
+
+Unlike some other languages, **memory is automatically managed** by JavaScript behind the scenes.  
+Every value we create in JavaScript goes through a **memory lifecycle**:
+
+---
+
+### 1. **Allocate Memory**
+```js
+let temp = 23.7;
+```
+Whenever we assign a value to a new variable, the engine automatically **allocates (reserves)** a piece of memory to store the value.
+
+---
+
+### 2. **Use Memory**
+```js
+temp = temp + 5;
+Math.round(temp);
+```
+While the code is running, the value is **written, read, and updated** in the allocated piece of memory.
+
+---
+
+### 3. **Release Memory**
+When no longer needed, the value is **deleted from memory** to free up resources.  
+That released memory can then be used for new values.
+
+---
+
+## 📌 Where Is Memory Allocated in JavaScript?
+
+Values in JavaScript are either **primitives** or **objects**.
+
+### **Primitives**
+- Number  
+- String  
+- Boolean  
+- Undefined  
+- Null  
+- Symbol  
+- BigInt  
+
+📍 Memory for primitives is stored **directly in the call stack**.
+
+---
+
+### **Objects**
+- Object literals  
+- Arrays  
+- Functions  
+- And many more...  
+
+📍 Memory for objects is allocated in the **heap**.  
+
+But here’s the key:  
+- The **reference (pointer) to the object** is stored in the **call stack**.  
+- The **actual object data** lives in the **heap**.  
+
+---
+
+## 📌 Understanding Object References
+
+What you need to understand:  
+- Variables in the call stack **do not hold objects directly**.  
+- They hold **references (pointers)** to objects stored in the heap.  
+- To us developers, this mechanism is completely hidden. On the surface, it **looks like** the variable is holding the object itself, but in reality, it’s only storing the reference.
+
+---
+
+### Example: Copying References
+
+```js
+const location = { city: 'Faro', country: 'Portugal' };
+const newLocation = location;
+```
+
+- `location` holds a **reference** to the object in the heap.  
+- When we assign `newLocation = location`, we’re **copying the reference**, not the actual object.  
+- Both variables now point to the **same object in memory**.  
+
+```js
+newLocation.city = 'Lisbon';
+console.log(location.city); // "Lisbon" (changed too!)
+```
+
+✔️ **Takeaway**: Copying an object variable **only copies the reference**, **not the object itself**.
+
+
+
+# 🔑 JavaScript: Value vs Reference (Complete Summary)
+
+## 📌 Assignment Behavior by Type
+
+| **Type**        | **Assignment Behavior** | **How to Create a New Copy**                                    |
+|------------------|-----------------------|-----------------------------------------------------------------|
+| **Primitives**   | **Copied by value**    | N/A – Primitives (numbers, strings, booleans, etc.) are already independent. |
+| **Objects**      | **Copied by reference**| Use `{ ...obj }`, `Object.assign({}, obj)`, or `structuredClone(obj)` for deep copies. |
+| **Arrays**       | **Copied by reference**| Use `[...arr]`, `arr.slice()`, or array methods like `map()`, `filter()`, `concat()` that return new arrays. |
+| **Functions**    | **Copied by reference**| Same as objects—functions are reference types.                   |
+| **Dates, Maps**  | **Copied by reference**| Use their constructors or libraries (e.g., `new Date(oldDate)`, `new Map(oldMap)`). |
+
+---
+
+## 📌 Array Methods That Return a New Array (Copy by Value)
+
+Some array methods **do not reuse the same reference**—they **return a new array** (shallow copy):
+
+| **Method**         | **Behavior**                                                     |
+|---------------------|-----------------------------------------------------------------|
+| `slice()`           | Returns a **shallow copy** of all or part of the array.          |
+| `concat()`          | Combines arrays/values into a **new array**.                     |
+| `map()`             | Transforms each element, returns a **new array**.                |
+| `filter()`          | Keeps elements passing a test, returns a **new array**.          |
+| `flat()`, `flatMap()`| Flattens/transform arrays, returns a **new array**.             |
+| `toSorted()` (ES2023)| Returns a sorted **copy** without touching the original.        |
+| `toReversed()` (ES2023)| Returns a **reversed copy**, original stays the same.         |
+| `toSpliced()` (ES2023) | Returns a **spliced copy**, leaves original untouched.        |
+
+### 🧩 **Examples**
+```js
+// slice
+const arr = [1, 2, 3];
+const copy = arr.slice();
+copy.push(4);
+console.log(arr);  // [1, 2, 3]
+console.log(copy); // [1, 2, 3, 4]
+
+// map
+const nums = [1, 2, 3];
+const doubled = nums.map(n => n * 2);
+console.log(nums);    // [1, 2, 3]
+console.log(doubled); // [2, 4, 6]
+
+// concat
+const a = [1, 2], b = [3, 4];
+const combined = a.concat(b);
+console.log(combined); // [1, 2, 3, 4]
+
