@@ -471,4 +471,101 @@ Instead, use :
     ✅ function order (start,main) {...}
     ✅ const order = (start, main) => { ... }
 
-    
+
+
+## 3. Computed Property Names
+
+You can use expressions as keys in object literals:
+
+```js
+const day = "mon";
+const restaurant = {
+  [day]: "9-5" // key will be "mon"
+};
+```
+
+## 4. Object Destructuring
+
+Extract object properties into variables easily:
+
+```js
+const restaurant = { name: "KollegaX", openingHours: { mon: "9-5" } };
+
+// Basic destructuring
+const { name, openingHours } = restaurant;
+console.log(name); // "KollegaX"
+console.log(openingHours); // { mon: "9-5" }
+
+// Renaming variables
+const { name: restaurantName } = restaurant;
+console.log(restaurantName); // "KollegaX"
+
+// Default values
+const { rating = 5 } = restaurant;
+console.log(rating); // 5 (default used)
+
+
+```
+## 5. Spread & Rest Operators
+### Spread Operator
+Used to **copy** or **merge** objects:
+
+```js
+const obj1 = { a: 1, b: 2 };
+const obj2 = { ...obj1, c: 3 };
+
+console.log(obj2); // { a: 1, b: 2, c: 3 }
+```
+
+
+### Rest Operator
+Used to collect remaining properties into a new object:
+```js
+const { a, ...rest } = obj2;
+
+console.log(a);    // 1
+console.log(rest); // { b: 2, c: 3 }
+```
+
+
+## 6. Object.assign()
+Before spread syntax, you could copy or merge objects using `Object.assign()`:
+
+```js
+const obj1 = { a: 1, b: 2 };
+const obj2 = Object.assign({}, obj1, { c: 3 });
+
+console.log(obj2); // { a: 1, b: 2, c: 3 }
+// Notes :
+// Creates a shallow copy of the object.
+// Useful for merging multiple objects into one.
+```
+
+
+
+
+## 7. New Object Methods
+ES6+ introduced several helpful methods for working with objects:
+```js
+const obj = { a: 1, b: 2 };
+
+// Get all keys
+console.log(Object.keys(obj));   // ['a', 'b']
+
+// Get all values
+console.log(Object.values(obj)); // [1, 2]
+
+// Get [key, value] pairs
+console.log(Object.entries(obj)); // [['a', 1], ['b', 2]]
+
+// Convert array of pairs back to object
+const entries = [['x', 10], ['y', 20]];
+const newObj = Object.fromEntries(entries);
+console.log(newObj); // { x: 10, y: 20 }
+```
+
+Notes:
+Object.keys() → returns an array of keys.
+Object.values() → returns an array of values.
+Object.entries() → returns an array of [key, value] pairs.
+Object.fromEntries() → converts an array of [key, value] pairs back to an object.
