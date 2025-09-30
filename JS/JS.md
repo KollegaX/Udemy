@@ -415,4 +415,60 @@ console.log(doubled); // [2, 4, 6]
 const a = [1, 2], b = [3, 4];
 const combined = a.concat(b);
 console.log(combined); // [1, 2, 3, 4]
+```
 
+# ES6 Object Enhancements
+## 1. Property Shorthand
+- Before ES6, when using variables as object properties, you had to explicitly write key: value.
+
+Example (Pre-ES6) :
+```js
+const openingHours = {mon: "9-5"};
+const restaurant = {
+    openingHours: openingHours
+ };
+```
+
+With ES6, if the property key and variable name are the same, 
+you can just write the variable once (shorthand syntax).
+
+Example (ES6+):
+```js
+ const openingHours = { mon: "9-5" };
+ const restaurant = {
+   openingHours
+ };
+```
+
+## 2. Method Shorthand
+- Before ES6, functions inside objects had to be defined with the "function" keyword.
+
+Example (Pre-ES6):
+```js
+ const restaurant = {
+     order: function(start, main) {
+         return `${start} & ${main}`;
+      }
+ };
+```
+
+With ES6, you can omit "function" when defining methods in objects or classes.
+
+Example (ES6+):
+```js
+ const restaurant = {
+    order(start, main) {
+      return `${start} & ${main}`;
+    }
+  };
+```
+
+Note: This shorthand syntax ONLY works inside objects and classes.
+You cannot write standalone functions as :
+    ❌ order(start,main) {...}
+
+Instead, use :
+    ✅ function order (start,main) {...}
+    ✅ const order = (start, main) => { ... }
+
+    
