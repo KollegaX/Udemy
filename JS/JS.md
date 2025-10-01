@@ -569,3 +569,105 @@ Object.keys() → returns an array of keys.
 Object.values() → returns an array of values.
 Object.entries() → returns an array of [key, value] pairs.
 Object.fromEntries() → converts an array of [key, value] pairs back to an object.
+
+
+
+# Optional Chaining (`?.`) in JavaScript
+
+Optional chaining (`?.`) is one of those tiny features that removes a lot of defensive boilerplate.  
+Below is a concise but comprehensive reference: what it is, exact behavior, many examples (property access, computed, calls, arrays), evaluation order/short-circuiting, interactions with other operators (`??`, `||`, `&&`), TypeScript notes, common pitfalls and best practices.
+
+---
+
+## What it is — quick definition
+
+Optional chaining `?.` lets you access a property, call a function, or index into a value **without throwing** when an intermediate value is `null` or `undefined`.  
+
+👉 If the value to the left of `?.` is `null` or `undefined`, the expression **short-circuits** and evaluates to `undefined` (or does nothing in some contexts), instead of throwing.
+
+## 1. Object property access
+```js
+const user = { profile: { name: "Alice" } };
+
+console.log(user?.profile?.name);   // "Alice"
+console.log(user?.address?.city);   // undefined (no error)
+```
+
+## 2. Computed property access
+```js
+const settings = { theme: "dark" };
+const key = "theme";
+
+console.log(settings?.[key]);   // "dark"
+
+const empty = null;
+console.log(empty?.[key]);      // undefined
+```
+
+## 3. Array indexing
+```js
+const arr = [10, 20, 30];
+
+console.log(arr?.[1]);   // 20
+
+const nothing = null;
+console.log(nothing?.[0]);  // undefined
+```
+
+## 4. Function calls
+```js
+const greet = (name) => `Hello, ${name}!`;
+
+console.log(greet?.("Bob"));   // "Hello, Bob!"
+
+const maybeFn = undefined;
+console.log(maybeFn?.("Bob")); // undefined (no crash)
+```
+
+## 5. Chained deep access
+```js
+const data = {
+  user: {
+    profile: {
+      avatar: { url: "https://example.com/avatar.png" }
+    }
+  }
+};
+
+console.log(data?.user?.profile?.avatar?.url); 
+// "https://example.com/avatar.png"
+
+console.log(data?.user?.account?.email); 
+// undefined (instead of TypeError)
+```
+
+## 6. With ?? for defaults
+```js
+const config = null;
+const theme = config?.settings?.theme ?? "light";
+
+console.log(theme); // "light"
+```
+
+## 7. Safe method calls
+```js
+const person = {
+  sayHi() { return "Hi!"; }
+};
+
+console.log(person.sayHi?.());   // "Hi!"
+
+const nobody = {};
+console.log(nobody.sayHi?.());   // undefined (no crash)
+```
+
+## 8. Working with falsy but not nullish values
+```js
+const obj = { value: 0, text: "" };
+
+console.log(obj?.value); // 0 (not nullish)
+console.log(obj?.text);  // "" (not nullish)
+```
+
+
+
