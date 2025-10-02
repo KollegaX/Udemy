@@ -669,5 +669,65 @@ console.log(obj?.value); // 0 (not nullish)
 console.log(obj?.text);  // "" (not nullish)
 ```
 
+# JavaScript Set Method
+### Basics
+- A Set is a collection of unique values.
+- Values can be of any type (primitive or object).
+- Duplicates are ignored automatically.
 
+### Main Methods
+- add(value) → adds a value
+- delete(value) → removes a value
+- has(value) → checks if value exists
+- clear() → removes all items
+- size → returns number of items
+```js
+const s = new Set();
+s.add(10);
+s.add(20);
+console.log(s.has(10)); // true
+s.delete(20);
+console.log(s.size);    // 1
+```
+
+### Iterating
+- Sets are iterable:
+```js
+const s = new Set([1, 2, 3]);
+for (let val of s) {
+  console.log(val);
+}
+// or:
+s.forEach(v => console.log(v));
+```
+### ⚠️ Important: No Indexes
+- Unlike arrays, Sets don’t have indexes.
+- You can’t do s[0] or s.at(0) directly.
+
+### Solution: Convert to Array (to use indexes)
+- Use Array.from(set)
+- Or use the spread operator [...set]
+```js
+const s = new Set([10, 20, 30]);
+
+const arr1 = Array.from(s);
+const arr2 = [...s];
+
+console.log(arr1[0]); // 10
+console.log(arr2[2]); // 30
+```
+
+
+### Common Use Cases
+- Removing duplicates:
+```js
+const nums = [1, 2, 2, 3, 4, 4];
+const unique = [...new Set(nums)];
+console.log(unique); // [1, 2, 3, 4]
+```
+- Fast membership checking :
+```js
+const seen = new Set([100, 200]);
+console.log(seen.has(200)); // true
+```
 
