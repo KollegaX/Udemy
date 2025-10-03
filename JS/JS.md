@@ -831,6 +831,57 @@ function union(setA, setB) {
 const resultUnion = union(new Set([1,2,3]), new Set([2,3,4]));
 console.log(resultUnion); // Set {1, 2, 3, 4}
 ```
+
+### .difference()
+- Purpose: Returns a new Set with elements in the first set that are not in the second set.
+```js
+const diff = A.difference(B);
+console.log(diff); // Set {1, 2}
+```
+### Manual Implementation:
+```js
+const difference = new Set([...A].filter(x => !B.has(x)));
+```
+- Think of it as A - B.
+
+
+### .symmetricDifference()
+- Purpose: Returns a new Set with elements in either set but not in both.
+```js
+const symDiff = A.symmetricDifference(B);
+console.log(symDiff); // Set {1, 2, 5, 6}
+```
+- Manual Implementation:
+```js
+const symmetricDifference = new Set(
+  [...A].filter(x => !B.has(x))
+  .concat([...B].filter(x => !A.has(x)))
+);
+```
+- Keeps elements exclusive to each set.
+
+
+### Helper Functions for Older JS Versions
+```js
+function intersect(setA, setB) {
+  return new Set([...setA].filter(x => setB.has(x)));
+}
+
+function union(setA, setB) {
+  return new Set([...setA, ...setB]);
+}
+
+function difference(setA, setB) {
+  return new Set([...setA].filter(x => !setB.has(x)));
+}
+
+function symmetricDifference(setA, setB) {
+  return new Set([
+    ...[...setA].filter(x => !setB.has(x)),
+    ...[...setB].filter(x => !setA.has(x))
+  ]);
+}
+```
 - .union() simplifies combining Sets, but the underlying logic is just spreading both sets into a new Set to keep unique elements.
 
 
