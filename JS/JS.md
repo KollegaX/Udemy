@@ -891,5 +891,191 @@ function symmetricDifference(setA, setB) {
 | Difference           | `A.difference(B)`          | `new Set([...A].filter(x => !B.has(x)))`                       |
 | Symmetric Difference | `A.symmetricDifference(B)` | `new Set([...A].filter(x => !B.has(x)), [...B].filter(x => !A.has(x)))` |
 
+------------------------------------------------------------------------
+
+# JavaScript Maps
+
+### 1.Creating a Map
+```js
+// Empty Map
+const map1 = new Map();
+
+// Map with initial key-value pairs
+const map2 = new Map([
+  ['name', 'Alice'],
+  ['age', 25],
+  [true, 'boolean key'],
+  [{}, 'object key']
+]);
+
+console.log(map2);
+```
+
+### 2. Adding Elements
+- You use the .set(key, value) method to add elements.
+```js
+const map = new Map();
+map.set('name', 'Bob');
+map.set('age', 30);
+map.set(1, 'one');
+map.set(true, 'yes');
+
+console.log(map);
+```
+- Chaining is allowed:
+```js
+map.set('city', 'New York').set('country', 'USA');
+```
+
+### 3. Accessing Elements
+- Use .get(key):
+```js
+console.log(map.get('name'));   // Bob
+console.log(map.get(1));        // one
+console.log(map.get(true));     // yes
+console.log(map.get('unknown')); // undefined
+```
+
+### 4. Checking for Keys
+- Use .has(key):
+```js
+console.log(map.has('age'));  // true
+console.log(map.has('gender')); // false
+```
+
+### 5. Removing Elements
+- Use .delete(key):
+```js
+map.delete('age');
+console.log(map.has('age')); // false
+```
+- Use .clear() to remove all entries:
+```js
+map.clear();
+console.log(map.size); // 0
+```
+
+### 6. Map Size
+```js
+map.set('a', 1);
+map.set('b', 2);
+
+console.log(map.size); // 2
+```
 
 
+### 7. Iterating Over Maps
+- Using for...of
+```js
+const map = new Map([
+  ['name', 'Alice'],
+  ['age', 25]
+]);
+
+for (const [key, value] of map) {
+  console.log(`${key}: ${value}`);
+}
+```
+
+- Using .forEach()
+```js
+map.forEach((value, key) => {
+  console.log(`${key} = ${value}`);
+});
+```
+
+- Iterating keys, values, entries
+```js
+console.log([...map.keys()]);   // ['name', 'age']
+console.log([...map.values()]); // ['Alice', 25]
+console.log([...map.entries()]);// [['name','Alice'], ['age',25]]
+```
+
+### 8. Converting Between Map and Object
+- Map → Object
+```js
+const obj = Object.fromEntries(map);
+console.log(obj); // { name: 'Alice', age: 25 }
+```
+
+- Object → Map
+```js
+const obj2 = { a: 1, b: 2 };
+const mapFromObj = new Map(Object.entries(obj2));
+console.log(mapFromObj);
+```
+
+### 9. Using Objects and Arrays as Keys
+```js
+const map = new Map();
+const objKey = { id: 1 };
+const arrKey = [1, 2, 3];
+
+map.set(objKey, 'Object value');
+map.set(arrKey, 'Array value');
+
+console.log(map.get(objKey)); // 'Object value'
+console.log(map.get(arrKey)); // 'Array value'
+```
+- Note: Objects and arrays are stored by reference, not by value.
+
+### 10. WeakMap
+- A WeakMap is similar to Map but:
+- Keys must be objects
+- Keys are weakly referenced, meaning they don’t prevent garbage collection
+- Cannot be iterated or checked for size
+```js
+const weakMap = new WeakMap();
+const obj = {};
+weakMap.set(obj, 'value');
+
+console.log(weakMap.get(obj)); // 'value'
+```
+
+
+### 11. Practical Examples
+- Counting occurrences
+```js
+const arr = ['apple', 'banana', 'apple', 'orange', 'banana'];
+const countMap = new Map();
+
+arr.forEach(item => {
+  countMap.set(item, (countMap.get(item) || 0) + 1);
+});
+
+console.log(countMap); // Map(3) { 'apple' => 2, 'banana' => 2, 'orange' => 1 }
+```
+- Storing object metadata
+```js
+const user1 = { name: 'Alice' };
+const user2 = { name: 'Bob' };
+const metadata = new Map();
+
+metadata.set(user1, { lastLogin: '2025-10-03' });
+metadata.set(user2, { lastLogin: '2025-10-01' });
+
+console.log(metadata.get(user1)); // { lastLogin: '2025-10-03' }
+```
+
+### 12. Summary of Map Methods
+| Method              | Description                                 |
+| ------------------- | ------------------------------------------- |
+| `new Map()`         | Create a new Map                            |
+| `set(key, value)`   | Add or update a key-value pair              |
+| `get(key)`          | Retrieve value by key                       |
+| `has(key)`          | Check if key exists                         |
+| `delete(key)`       | Remove key-value pair                       |
+| `clear()`           | Remove all entries                          |
+| `size`              | Number of entries                           |
+| `keys()`            | Returns an iterator of keys                 |
+| `values()`          | Returns an iterator of values               |
+| `entries()`         | Returns an iterator of `[key, value]` pairs |
+| `forEach(callback)` | Iterate over each key-value pair            |
+
+
+### 
+- Keys can be anything, not just strings.
+- Maps maintain insertion order.
+- Maps are iterable directly.
+- WeakMaps allow objects as keys and are not enumerable.
+- Converting between Objects and Maps is easy using Object.entries() / Object.fromEntries().
