@@ -731,3 +731,106 @@ const seen = new Set([100, 200]);
 console.log(seen.has(200)); // true
 ```
 
+
+# ES2025 Set Methods: `.intersection` and `.union`
+
+## `.intersection` Method
+
+The `.intersection()` method in ES2025 allows you to find common elements between two `Set` objects.
+
+```js
+const commonFoods = italianFoods.intersection(mexicanFoods);
+
+console.log('Intersection :', commonFoods);
+console.log([...commonFoods]); // converted to array
+```
+- Note: You can only use .intersection() on Set objects, not on arrays.
+
+
+### Manual Intersection with Sets
+- If your environment does not support .intersection(), you can do it manually:
+```js
+const A = new Set([1, 2, 3, 4]);
+const B = new Set([3, 4, 5, 6]);
+
+// Intersection manually
+const intersection = new Set([...A].filter(x => B.has(x)));
+console.log(intersection); // Set {3, 4}
+```
+
+### Using Arrays Only
+- You can also find intersections using arrays, though it’s less efficient for large arrays:
+```js 
+const arr1 = [1, 2, 3, 4];
+const arr2 = [3, 4, 5, 6];
+
+const intersection1 = arr1.filter(x => arr2.includes(x));
+console.log(intersection1); // [3, 4]
+```
+- Notes:
+- This returns an array, not a Set.
+- Using .includes() is O(n), so large arrays are slower. Using a Set improves performance.
+
+
+### Using a Helper Function
+- You can write a helper function to replicate .intersection() in any JS version:
+```js
+function intersect(setA, setB) {
+  return new Set([...setA].filter(x => setB.has(x)));
+}
+
+// Example
+const result = intersect(new Set([1,2,3]), new Set([2,3,4]));
+console.log(result); // Set {2, 3}
+```
+- .intersection() is just a convenience.
+- The underlying logic is always:
+- “Keep only items from Set A that also exist in Set B.”
+- Using filter + has or includes lets you replicate it in any JS version.
+
+
+### .union Method
+- The .union() method in ES2025 allows you to combine two Set objects into one with all unique elements.
+```js
+const allFoods = italianFoods.union(mexicanFoods);
+
+console.log('Union :', allFoods);
+console.log([...allFoods]); // converted to array
+```
+
+### Manual Union with Sets
+```js
+const A = new Set([1, 2, 3, 4]);
+const B = new Set([3, 4, 5, 6]);
+
+// Union manually
+const union = new Set([...A, ...B]);
+console.log(union); // Set {1, 2, 3, 4, 5, 6}
+```
+
+### Using Arrays Only
+```js
+const arr1 = [1, 2, 3, 4];
+const arr2 = [3, 4, 5, 6];
+
+const unionArr = Array.from(new Set([...arr1, ...arr2]));
+console.log(unionArr); // [1, 2, 3, 4, 5, 6]
+```
+- Notes:
+-Using a Set ensures all elements are unique.
+- Converting back to an array is optional depending on your needs.
+
+
+### Using a Helper Function for Union
+```js
+function union(setA, setB) {
+  return new Set([...setA, ...setB]);
+}
+
+// Example
+const resultUnion = union(new Set([1,2,3]), new Set([2,3,4]));
+console.log(resultUnion); // Set {1, 2, 3, 4}
+```
+- .union() simplifies combining Sets, but the underlying logic is just spreading both sets into a new Set to keep unique elements.
+
+
