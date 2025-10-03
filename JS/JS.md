@@ -884,4 +884,12 @@ function symmetricDifference(setA, setB) {
 ```
 - .union() simplifies combining Sets, but the underlying logic is just spreading both sets into a new Set to keep unique elements.
 
+| Operation            | Modern ES2023+               | ES6 / Older Equivalent                                        |
+|----------------------|-----------------------------|----------------------------------------------------------------|
+| Union                | `A.union(B)`               | `new Set([...A, ...B])`                                       |
+| Intersection         | `A.intersection(B)`        | `new Set([...A].filter(x => B.has(x)))`                        |
+| Difference           | `A.difference(B)`          | `new Set([...A].filter(x => !B.has(x)))`                       |
+| Symmetric Difference | `A.symmetricDifference(B)` | `new Set([...A].filter(x => !B.has(x)), [...B].filter(x => !A.has(x)))` |
+
+
 
