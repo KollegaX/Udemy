@@ -1072,10 +1072,171 @@ console.log(metadata.get(user1)); // { lastLogin: '2025-10-03' }
 | `entries()`         | Returns an iterator of `[key, value]` pairs |
 | `forEach(callback)` | Iterate over each key-value pair            |
 
-
 ### 
 - Keys can be anything, not just strings.
 - Maps maintain insertion order.
 - Maps are iterable directly.
 - WeakMaps allow objects as keys and are not enumerable.
 - Converting between Objects and Maps is easy using Object.entries() / Object.fromEntries().
+
+
+# Where Data can come from ? (Sources of Data):
+1. From the program itself: Data written directly in source code (e.g. status messages)
+2. From the UI: Data input from the user or data written in DOM (e.g. tasks in todo app)
+3. From external sources: Data fetched for example from web API (e.g. recipe objects)
+API - Application Programming Interface 
+Data from APIS comes in JSON
+
+### 1. JSON (JavaScript Object Notation)
+- JSON is the most popular data format today, especially in web APIs.
+- Structure: Objects {} and arrays []
+- Data types: Strings, numbers, booleans, null, arrays, objects
+- Human-readable: Yes, easy to read and write
+- Parsing in JS: Easy with JSON.parse() / JSON.stringify()
+- Example:
+```js
+{
+  "name": "Alice",
+  "age": 25,
+  "isStudent": false,
+  "courses": ["Math", "Physics"]
+}
+```
+- JS equivalent:
+```js
+const data = {
+  name: "Alice",
+  age: 25,
+  isStudent: false,
+  courses: ["Math", "Physics"]
+};
+```
+- Most APIs use JSON today.
+
+
+### 2. XML (eXtensible Markup Language)
+- XML is an older data format, often used in enterprise systems and older APIs.
+- Structure: Uses tags, like HTML
+- Data types: Everything is text (you may need conversion)
+- Human-readable: Yes, but more verbose than JSON
+- Parsing in JS: Requires a parser like DOMParser
+
+```xml
+<user>
+  <name>Alice</name>
+  <age>25</age>
+  <isStudent>false</isStudent>
+  <courses>
+    <course>Math</course>
+    <course>Physics</course>
+  </courses>
+</user>
+```
+- Pros: Very flexible, supports schemas
+- Cons: Verbose, harder to work with in JS
+
+- Parsing in JS:
+```js
+const parser = new DOMParser();
+const xmlString = `<user><name>Alice</name></user>`;
+const xmlDoc = parser.parseFromString(xmlString, "text/xml");
+console.log(xmlDoc.getElementsByTagName("name")[0].textContent); // Alice
+```
+
+
+### 3. CSV (Comma-Separated Values)
+- CSV is a simple table-like format, often used for spreadsheets, data export/import.
+- Structure: Rows and columns, separated by commas (or other delimiters)
+- Data types: Everything is text (numbers can be parsed)
+- Human-readable: Yes, very simple
+- Parsing in JS: Use .split() or libraries like PapaParse
+
+<note>
+name,age,isStudent
+Alice,25,false
+Bob,30,true
+<note>
+
+- JavaScript parsing:
+```js
+const csv = `name,age,isStudent
+Alice,25,false
+Bob,30,true`;
+
+const rows = csv.split("\n");
+const headers = rows[0].split(",");
+const data = rows.slice(1).map(row => {
+  const values = row.split(",");
+  return Object.fromEntries(values.map((v, i) => [headers[i], v]));
+});
+
+console.log(data);
+/*
+[
+  { name: "Alice", age: "25", isStudent: "false" },
+  { name: "Bob", age: "30", isStudent: "true" }
+]
+*/
+```
+- Pros: Simple, easy to import/export to Excel
+- Cons: No nested structures, limited data types
+
+### Summary Comparison
+| Feature       | JSON                   | XML                    | CSV                     |
+| ------------- | ---------------------- | ---------------------- | ----------------------- |
+| Structure     | Objects & arrays       | Tags & nested elements | Rows & columns          |
+| Readability   | Good                   | Moderate (verbose)     | Good                    |
+| Data types    | Native (number, bool…) | Text only              | Text only               |
+| Nested data   | Yes                    | Yes                    | No                      |
+| Common uses   | APIs, web, JS apps     | Enterprise, config     | Spreadsheets, exports   |
+| Parsing in JS | `JSON.parse`           | `DOMParser`            | Split strings / library |
+
+
+💡 Rule of thumb:
+- If you’re working with modern web APIs → JSON
+- If it’s a legacy system → XML
+- If it’s tabular or spreadsheet data → CSV
+
+
+- it doesnt matter from where it comes the (Collection of data) 
+- -> we need to store it somewhere, so we use (Data Structures), but as we know they are 4 built in data structures in JS.
+- So we need to decide what to choose and where to choose it
+
+### Do we need a simple list of values ? If so - Arrays or Sets  (Values without any description)
+### If we need value,key pairs, then - Objects or Maps (Keys allow us to describe values)
+
+### Arrays = Use when you need ordered list of values (might contain duplicates); Use when you need to manipulate data;
+```js
+tasks = ['Code', 'Eat', 'Code']; // ['Code','Eat','Code']
+```
+
+### Sets = Use when you need to work with unique values; Use when high-performance is really important; Use to remove duplicates from arrays;
+```js
+tasks = new Set(['Code','Eat','Code']) // {'Code','Eat'}
+```
+
+### Objects = More "traditional" key/value store ("abused" objects); Easier to write and access values with . and [];
+- Use when you need to include functions (methods)
+- Use when working with JSON (can convert to map later IF neccessery)
+- U can use .this keyword, which is impossible in Maps
+```js
+task = {
+    task: 'Code',
+    date: 'today',
+    repeat: true
+};
+```
+
+### Maps = Better performance; Keys can have any data type; Easy to iterate; Easy to compute size; 
+- Use when you simply need to map key to values
+- Use when you need keys that are not strings
+```js
+task = new Map([
+    ['task','Code'],
+    ['date','today'],
+    [false, 'Start coding!']
+]);
+```
+
+- Other Built-IN Data Structures - WeakMap, WeakSet
+- Non-Built IN - Stacks, Queues, Linked lists, Trees, Hash tables
