@@ -1606,3 +1606,67 @@ console.log(newJonas); // new object with prefixed name
 
 Understanding the distinction between copying values and copying references is key to preventing subtle bugs in JavaScript — especially when functions mutate objects. Embracing immutability and pure functions where practical makes code easier to test and reason about. At the same time, first-class functions and higher-order functions are powerful tools to compose behavior and keep code DRY.
 
+
+
+# JavaScript `call()` Method
+
+The `call()` method is a built-in JavaScript function that allows you to **call a function with a specific `this` value** and arguments provided individually. 
+It is commonly used when you want a function to operate in the context of a different object.
+
+## Syntax
+```js
+functionName.call(thisArg, arg1, arg2, ...);
+```
+- functionName – The function you want to invoke.
+- thisArg – The value to use as this inside the function.
+- arg1, arg2, ... – Arguments passed to the function.
+
+### How it Works
+- Normally, this inside a function depends on how the function is called. With .call(), you can explicitly set the value of this.
+```js
+const airline = {
+    name: 'Delta',
+    iataCode: 'DL',
+    bookings: [],
+    book(flightNum, passengerName) {
+        console.log(`${passengerName} booked a seat on ${this.name} flight ${this.iataCode}${flightNum}`);
+        this.bookings.push({ flight: `${this.iataCode}${flightNum}`, name: passengerName });
+    }
+};
+
+const anotherAirline = {
+    name: 'United',
+    iataCode: 'UA',
+    bookings: [],
+};
+
+const book = airline.book;
+
+// Using call to set `this` to anotherAirline
+book.call(anotherAirline, 202, 'Chris Evans');
+
+console.log(anotherAirline.bookings);
+// Output: [{ flight: 'UA202', name: 'Chris Evans' }]
+```
+### Key Points
+- Explicit this: call() allows you to call a function with this explicitly set to any object.
+- Arguments individually: Each argument is passed one by one, unlike .apply() which takes an array.
+### Use cases:
+- Borrowing methods from one object to use with another.
+- Calling constructors or functions in the context of different objects.
+- Dynamically setting this in generic utility functions.
+
+### Difference Between call() and apply()
+| Method  | Arguments                   |
+| ------- | --------------------------- |
+| `call`  | List arguments individually |
+| `apply` | Pass arguments as an array  |
+```js
+const flightData = [303, 'Scarlett Johansson'];
+book.apply(anotherAirline, flightData); // equivalent to call(anotherAirline, 303, 'Scarlett Johansson')
+```
+
+### Summary
+- .call() is used to invoke a function with a specific this value.
+- It’s particularly useful for method borrowing and dynamic function invocation.
+- Remember: arguments are passed individually.
