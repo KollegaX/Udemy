@@ -69,3 +69,21 @@ const boardPassengers = function(n, wait){
 
 const perGroup = 1000; /// the closure has priority, so this will be not used
 boardPassengers(180, 3)
+
+
+
+// ---------------------------------------------------------------------------------------
+// Practice :
+    
+(function (){
+    const header = document.querySelector('h1');
+    header.style.color = 'red';
+
+    document.querySelector('body').addEventListener('click', function(x){
+        header.style.color = 'blue';
+    })
+})();
+
+// The IIFE (Immediately Invoked Function Expression) runs as soon as the script is loaded. Inside it, we select the <h1> element and set its color to red. Even though the IIFE finishes executing, the event listener that was defined inside it remains active.
+// When the user clicks anywhere on the page, the event listener triggers and changes the header’s color to blue.
+// So, even though the IIFE itself has already executed, the inner event listener still has access to the header variable through closure — meaning it “remembers” the variable from when it was created inside the IIFE.
