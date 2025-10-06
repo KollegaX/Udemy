@@ -75,3 +75,27 @@ movements.forEach(function(mov, i, arr){  /// in forEach, the first value is cur
 // 2 : function(400)
 // ...
 /// forEach cannot be broken, if u wanna break some statement, u need to use for..of
+
+
+
+const currencies = new Map([
+  ['USD', 'United States dollar'],
+  ['EUR', 'Euro'],
+  ['GBP', 'Pound sterling'],
+]);
+
+currencies.forEach(function(value, key, map){
+    console.log(`${key} : ${value}`);
+    
+})
+
+
+// Set
+const currenctiesUnique = new Set(['USD','GBP','USD','EUR','EUR'])
+console.log(currenctiesUnique);
+currenctiesUnique.forEach(function(value,key,map){
+    console.log(`${key} : ${value}`);
+})  // A set doesn't have keys, that's why it output is -> USD : USD, GBP : GBP
+
+// underscore in JS : _ , means throwaway
+// currenctiesUnique.forEach(function(value, _ ,map)
