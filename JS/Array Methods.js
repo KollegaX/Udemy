@@ -30,3 +30,48 @@ console.log([...arr, ...arr2]); // doesnt mutate
 
 // JOIN 
 console.log(letters.join(' - '));
+
+
+// AT Method 
+const arr3 = [23,11,64];
+console.log(arr[0]);
+console.log(arr.at(0));
+
+
+console.log(arr[arr.length - 1]); 
+// OR
+console.log(arr.slice(-1)[0]); 
+console.log(arr.at(-1));
+
+
+console.log('jonas'.at(0));
+console.log('jonas'.at(-1));
+
+
+
+
+const movements = [200, 450, -400, 3000, -650, -130, 70, 1300];
+
+// for (const movement of movements){
+for (const [i, movement] of movements.entries()) {/// how to check counter variable in For..of loop
+    if (movement > 0){
+        console.log(`Movement ${i + 1}: You deposited ${movement}`);
+    } else {
+        console.log(`Movement ${i + 1}: You withdrew ${Math.abs(movement)}`) 
+    }
+}
+
+
+movements.forEach(function(mov, i, arr){  /// in forEach, the first value is currentElement, the second one is the Index
+    if (mov > 0){
+        console.log(`Movement ${i + 1}: You deposited ${mov}`);
+    } else {
+        console.log(`Movement ${i + 1}: You withdrew ${Math.abs(mov)}`) 
+    }
+})
+
+// 0 : function(200)
+// 1 : function(450)
+// 2 : function(400)
+// ...
+/// forEach cannot be broken, if u wanna break some statement, u need to use for..of
