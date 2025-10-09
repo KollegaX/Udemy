@@ -1670,3 +1670,110 @@ book.apply(anotherAirline, flightData); // equivalent to call(anotherAirline, 30
 - .call() is used to invoke a function with a specific this value.
 - It’s particularly useful for method borrowing and dynamic function invocation.
 - Remember: arguments are passed individually.
+
+
+
+# Explanation — .insertAdjacentHTML(), .innerHTML, and .textContent
+- Below is a clear, practical guide to what these DOM APIs do, their arguments/behaviour, examples, differences, security considerations, and recommended use-cases.
+
+## 1) element.insertAdjacentHTML(position, htmlString)
+### What it does
+- Parses the htmlString as HTML and inserts the resulting nodes into the DOM at a position relative to element.
+- It does not reparse or replace the entire element (unlike assigning to .innerHTML), so it can be faster and less disruptive.
+### position values :
+- "beforebegin" — insert before the element itself (as a previous sibling).
+- "afterbegin" — insert inside the element, before its first child.
+- "beforeend" — insert inside the element, after its last child.
+- "afterend" — insert after the element itself (as a next sibling)
+- Example :
+```js
+const div = document.getElementById('container');
+div.insertAdjacentHTML('beforeend', '<p>Appended paragraph</p>');
+```
+When to use :
+- When you want to insert HTML (fragments) quickly at a precise location without rebuilding the whole element.
+- Good for appending many items incrementally (e.g., chat messages).
+
+Caveats / Security :
+- htmlString is parsed as HTML — if it contains attacker-controlled content, this is an XSS vector. Always sanitize untrusted HTML (e.g., DOMPurify) before inserting.
+- Scripts inserted as part of the string are parsed but <script> tags inserted this way will not execute in many browsers; however inline event handlers (e.g., onclick="...") or onerror on elements will still execute — still dangerous.
+
+
+## 2) element.innerHTML
+### What it does
+- Getting .innerHTML returns a string with the HTML serialization of element’s children.
+- Setting element.innerHTML = htmlString replaces the element’s entire content: browser parses the string and builds new DOM nodes, removing the old children.
+```js
+element.innerHTML = '';
+```
+- Removes all child nodes (fast and common way to clear an element).
+Note: removing nodes this way can lose event listeners attached directly to child nodes (if listeners were added to removed nodes; event delegation on ancestors is safe).
+
+When to use :
+- Simple replace/clear of an element’s content.
+- When you need to generate HTML from a template string.
+
+Caveats / Security :
+- Similarly to insertAdjacentHTML, setting .innerHTML with untrusted strings is an XSS risk. Never insert raw user input without sanitization.
+- Replacing large subtrees via .innerHTML may be less efficient if you only need to add/remove a small part.
+
+
+## 3) element.textContent
+### What it does
+- Gets/sets the text content of the element — no HTML parsing. All inserted content is treated as plain text.
+- Setting element.textContent = '...'; will remove child nodes and replace with a single text node.
+```js
+const userInput = "<script>alert('xss')</script>";
+element.textContent = userInput; // displays the literal text, safe
+```
+
+Differences vs .innerHTML
+- .textContent escapes HTML — safe for user-supplied data.
+- .innerHTML interprets HTML — useful when you want markup, but unsafe for untrusted strings.
+- .textContent is slightly faster for plain text updates and avoids reflow/parsing overhead of HTML.
+Note: You wrote // or .textContent = 0; — assigning 0 will set the content to the string "0". Usually you’d use '' (empty string) to clear.
+
+### Quick comparison table
+| Action                        | Parses HTML?    | Executes scripts?                                          | Safe for untrusted input? | Use when                                                    |
+| ----------------------------- | --------------- | ---------------------------------------------------------- | ------------------------- | ----------------------------------------------------------- |
+| `insertAdjacentHTML`          | Yes             | `<script>` often not executed, but inline handlers can run | **No** (sanitize first)   | Insert HTML fragment at a position without replacing parent |
+| `element.innerHTML = '...'`   | Yes             | Similar risks; scripts may execute in some contexts        | **No** (sanitize first)   | Replace entire element contents / quick clear               |
+| `element.textContent = '...'` | No (plain text) | No                                                         | **Yes**                   | Insert/display plain text safely                            |
+
+
+
+### Performance & best practices
+- For repeated inserts (e.g., many list items), consider:
+- Building nodes with document.createDocumentFragment() and appendChild, or
+- Using .insertAdjacentHTML('beforeend', html) in batched calls.
+- Avoid frequent innerHTML reassignments that cause full DOM rebuilds on the same parent.
+- Use event delegation (attach handler on parent) so removing child nodes won’t lose handlers.
+- Always sanitize any HTML built from user input or third-party sources (DOMPurify is a well-known library).
+
+
+### Practical examples
+Safe text insertion:
+```js
+const name = userProvidedName;
+greetingElement.textContent = `Hello, ${name}`; // safe
+```
+
+Unsafe - vulnerable to XSS :
+```js
+greetingElement.innerHTML = `Hello, ${userProvidedName}`; // DANGEROUS if name contains HTML
+```
+
+Insert HTML fragment (trusted) : 
+```js
+const list = document.getElementById('list');
+list.insertAdjacentHTML('beforeend', `<li>${escapeHtml(item)}</li>`);
+```
+(If item can be untrusted, escape or sanitize it first.)
+```js
+// preferred for clearing
+container.innerHTML = '';
+// or
+container.textContent = '';
+```
+
+
