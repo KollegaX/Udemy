@@ -192,3 +192,10 @@ debugger
 // const username = user.toLowerCase().split(' ').map(x => x[0]).join('') /// return is happening, we just simply don't see it.
 
 
+const labelBalance = document.querySelector('.balance__value');
+
+const calcDisplayBalance = function(movements){
+  const balance = movements.reduce((acc,mov) => acc + mov, 0);
+  labelBalance.textContent = `${balance} EUR`
+}
+calcDisplayBalance(account1.movements)
