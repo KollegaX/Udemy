@@ -99,3 +99,129 @@ currenctiesUnique.forEach(function(value,key,map){
 
 // underscore in JS : _ , means throwaway
 // currenctiesUnique.forEach(function(value, _ ,map)
+
+
+
+
+
+
+/// FIND METHOD is suppose to find just 1 element
+const movements = [200, 450, -400, 3000, -650, -130, 70, 1300];
+
+const account1 = {
+  owner: 'Jonas Schmedtmann',
+  movements: [200, 450, -400, 3000, -650, -130, 70, 1300],
+  interestRate: 1.2, // %
+  pin: 1111,
+};
+
+const account2 = {
+  owner: 'Jessica Davis',
+  movements: [5000, 3400, -150, -790, -3210, -1000, 8500, -30],
+  interestRate: 1.5,
+  pin: 2222,
+};
+
+const account3 = {
+  owner: 'Steven Thomas Williams',
+  movements: [200, -200, 340, -300, -20, 50, 400, -460],
+  interestRate: 0.7,
+  pin: 3333,
+};
+
+const account4 = {
+  owner: 'Sarah Smith',
+  movements: [430, 1000, 700, 50, 90],
+  interestRate: 1,
+  pin: 4444,
+};
+
+const accounts = [account1, account2, account3, account4];
+
+
+console.log(movements.find(mov => mov < 0));
+console.log(accounts);
+
+
+
+const account = accounts.find(acc => acc.owner === 'Jessica Davis')
+console.log(account);
+
+
+console.log(movements);
+
+const lastWithdrawal = movements.findLast(mov => mov < 0);
+console.log(lastWithdrawal);
+
+
+
+// 'Your latest large movement was X movements ago'
+
+const latestLargeMovementIndex = movements.findLastIndex(mov => Math.abs(mov) > 2000)
+console.log(latestLargeMovementIndex);
+
+console.log(`Your latest large movement was ${movements.length - latestLargeMovementIndex} movements ago`);
+
+
+/// Some and every
+
+
+///SOME METHOD
+console.log(movements);
+/// Checks only for EQUALITY
+console.log(movements.includes(-130));
+
+/// CONDITION
+console.log(movements.some(mov => mov === -130)); // doesnt make sense, thats why we use .includs
+
+const anyDeposits = movements.some(mov => mov > 1500)
+console.log(anyDeposits);
+
+
+
+/// EVERY METHOD
+console.log(movements.every(mov => mov > 0));
+console.log(account4.movements.every(mov => mov > 0));
+
+
+
+///Seperate callback
+const deposit = mov => mov > 0;
+console.log(movements.some(deposit));
+console.log(movements.every(deposit));
+console.log(movements.filter(deposit));
+
+
+
+/// Flat and FlatMap
+const arr = [[1,2,3], [4,5,6], 7,8];
+console.log(arr.flat());
+
+const arrDeep = [[[1,2],3], [4,[5,6]], 7,8]
+console.log(arrDeep.flat(2)); // second level of deepening
+
+
+const accountMovements = accounts.map(acc => acc.movements)
+console.log(accountMovements);
+const allMovements = accountMovements.flat()
+console.log(allMovements);
+const overallBalance = allMovements.reduce((acc,mov) => acc + mov, 0);
+console.log(overallBalance);
+
+/// OR easier
+
+/// Flat
+const overallBalance1 = accounts
+  .map(acc => acc.movements)
+  .flat()
+  .reduce((acc,mov) => acc + mov, 0);
+console.log(overallBalance1);
+
+
+// flatmap combines flat and map into just one method
+// flatMap
+const overallBalance2 = accounts
+  .flatMap(acc => acc.movements)  /// flatmap method goes 1 level deep, if u need to use for deeper use the .flat method only 
+  .reduce((acc,mov) => acc + mov, 0)
+
+
