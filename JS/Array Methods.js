@@ -301,4 +301,181 @@ console.log(max1);
 
 
 
+/// Array Grouping
+const groupedMovements = Object.groupBy(movements, movement => movement > 0 ? 'deposit' : 'withdrawals' );
+console.log(groupedMovements);
 
+const groupedByActivity = Object.groupBy(accounts, account => {
+    const movementCount = account.movements.length;
+
+    if (movementCount >= 8) return 'very active';
+    if (movementCount >= 4) return 'active';
+    if (movementCount >= 1) return 'moderate';
+    return 'inactive'
+})
+console.log(groupedByActivity);
+
+// const groupedAccounts = Object.groupBy(accounts, account => account.type);
+/// OR
+const groupedAccounts = Object.groupBy(accounts, ({type}) => type );
+console.log(groupedAccounts);
+
+
+
+/// More Ways of Creating and Filling Arrays ->
+
+const arr = [1,2,3,4,5,6,7];
+console.log(new Array(1,2,3,4,5,6,7));
+
+
+/// empty elements
+const x = new Array(7);
+console.log(x);
+
+
+/// Fill Method
+x.fill(1,3,5) // we can choose where to start, for example index 3 and end parameter for example 5
+console.log(x);
+
+
+arr.fill(23,4,6)
+console.log(arr);
+
+
+/// Array from (cleaner than 'new Array')
+const y = Array.from({length : 7}, () => 1);
+console.log(y);
+
+
+const z = Array.from({length: 7}, (_,i) => i + 1)
+console.log(z);
+
+
+// labelBalance.addEventListener('click', function() {
+//     const movementsUI = Array.from(document.querySelectorAll('.movements__value'),el => Number(el.textContent.replace('€', '')));
+
+//     console.log(movementsUI);
+//     // OR
+    
+//     const movemntsUI2 = [...document.querySelectorAll('.movements__value')].map(el => Number(el.textContent.replace('€', '')));
+//     console.log(movemntsUI2);
+    
+    
+// });
+
+
+/// Non-Destructive Alternatives: toReversed, toSorted, toSpliced, with
+console.log(movements);
+const reversedMov = movements.slice().reverse(); // .toReversed is replacing those 2 methods in just one
+const reversedToReversed = movements.toReversed();
+console.log(reversedToReversed);
+
+console.log(reversedMov);
+
+// toSorted (sort), toSpliced (splice)
+
+// movements[1] = 2000;
+const newMovements = movements.with(1,2000)
+console.log(newMovements);
+
+console.log(movements);
+
+
+// I WANT TO:
+// TO MUTATE ORIGINAL:
+.push(); // (end)
+.unshift(); // (start)
+
+// remove from original
+.pop() // (end)
+.shift() // (start)
+.splice() //(any)
+
+// others
+.reverse()
+.sort()
+.fill()
+
+
+
+// A NEW ARRAY BASED ON ORIGINAL
+// same length as original
+.map() //(loop)
+// Filtered using condition
+.filter()
+// Taking portion of original
+.slice()
+// With one item replaced
+.with()
+// Flattened
+.flat()
+.flatMap()
+// Reversed
+.toReversed()
+// Sorted
+.toSorted()
+// With deleted items
+.toSpliced() // Non-detructive version
+// Joining two arrays
+.concat()
+
+
+// AN ARRAY INDEX
+// Based on value
+.indexOf()
+// Based on test condition
+.findIndex()
+.findLastIndex()
+
+
+// AN ARRAY ELEMENT
+// Based on test condition:
+.find()
+.findLast()
+// Based on position
+.at()
+
+
+
+// KNOW IF ARRAY INCLUDES
+// Based on value 
+.includes()
+
+// Based on test condition
+.some()
+.every()
+
+// A NEW STRING
+// Based on separator 
+.join()
+
+
+// TO TRANSFORM TO VALUE
+// Based on accumulator
+.reduce() // (Boil down array to single value of any type: number, string, boolean, or even new array or object)
+
+
+// TO JUST LOOP ARRAY
+// Based on callback
+.forEach() // Does not create a new array, just loops over it
+
+
+
+/// MORE ARRAY TOOLS AND TECHNIQUES
+// Grouping an array by categories:
+Object.groupBy()
+
+// Creating a new array from scratch:
+Array.from()
+
+// Creating a new array from scratch with n empty positions (use together with .fill method):
+new Array(n)
+
+// Joining 2 or more arrays:
+[...arr1, ...arr2]
+
+// Creating a new array containing unique values from arr
+[...new Set(arr)]
+
+// Creating a new array containing unique elements that are present in both arr1 and arr2;
+[...new Set(arr1).intersection(new Set(arr2))]
