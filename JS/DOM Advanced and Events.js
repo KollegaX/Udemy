@@ -45,6 +45,8 @@
 // When JavaScript changes something in the DOM — the browser automatically re-renders the page on screen.
 
 
+
+
 // 198. Selecting, Creating, and Deleting Elements
 // HTMLCollection / NodeList what are those ?
 // if the DOM changes, the htmlCollection is immediately changed automatically
@@ -97,3 +99,64 @@ document.querySelector('.btn--close-cookie').addEventListener('click', function(
 document.querySelector('.btn--close-cookie').addEventListener('click', function(){
     message.parentElement.removeChild(message);
 });
+
+
+
+/// 199. Styles, Attributes and Classes
+// to set a style on element :
+message.style.backgroundColor = '#37383d' //the CamelCase (backgroundColor)
+message.style.width = '120%';
+
+console.log(message.style.color); // can't get it because its not manually typed (inline) because its behind a class
+
+// to get it u need to :
+console.log(getComputedStyle(message).color);
+console.log(getComputedStyle(message).height);
+
+// how to add example height 
+message.style.height = Number.parseFloat
+(getComputedStyle(message).height, 10) + 40 + 'px';
+
+console.log(getComputedStyle(message).height);
+
+document.documentElement.style.setProperty('--color-primary', 'orangered')
+
+
+/// ATTRIBUTES
+const logo = document.querySelector('.nav__logo');
+console.log(logo.alt);
+console.log(logo.src);
+console.log(logo.className);
+
+logo.alt = 'Beatiful minimalist logo'
+
+
+// Non-standard
+// we can't use the 
+console.log(logo.designer);
+// to access a like .designer that doesnt normally exist in JS :
+console.log(logo.getAttribute('designer')); 
+// or set it :
+logo.setAttribute('company','Bankist')
+
+
+console.log(logo.src);
+console.log(logo.getAttribute('src'));
+
+// on links (important)
+const link = document.querySelector('.twitter-link');
+console.log(link.href);
+console.log(link.getAttribute('href'));
+
+ // Data attributes
+ console.log(logo.dataset.versionNumber);
+ 
+
+ // Classes
+ logo.classList.add('c');
+ logo.classList.remove('c');
+ logo.classList.toggle('c');
+ logo.classList.contains('c'); // not includes
+
+ // Don't use (!!!)
+ logo.className = 'jonas'
