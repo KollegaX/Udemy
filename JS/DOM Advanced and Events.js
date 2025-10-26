@@ -85,10 +85,8 @@ header.append(message)
 // if we want to copy and paste it the same thing in many places
 // header.append(message.cloneNode(true))
 
-
 // header.before(message);
 header.after(message)
-
 
 // Delete elements
 document.querySelector('.btn--close-cookie').addEventListener('click', function(){
@@ -99,6 +97,11 @@ document.querySelector('.btn--close-cookie').addEventListener('click', function(
 document.querySelector('.btn--close-cookie').addEventListener('click', function(){
     message.parentElement.removeChild(message);
 });
+
+
+
+
+
 
 
 
@@ -150,7 +153,6 @@ console.log(link.getAttribute('href'));
 
  // Data attributes
  console.log(logo.dataset.versionNumber);
- 
 
  // Classes
  logo.classList.add('c');
@@ -160,3 +162,68 @@ console.log(link.getAttribute('href'));
 
  // Don't use (!!!)
  logo.className = 'jonas'
+
+
+
+
+
+
+
+/// 200. Implementing Smooth Scrolling
+ /// Old School Way :
+ const btnScrollTo = document.querySelector('.btn--scroll-to');
+ const section1 = document.querySelector('#section--1');
+ 
+ btnScrollTo.addEventListener('click', function(e){
+  const s1coords = section1.getBoundingClientRect();
+  console.log(s1coords);
+
+  console.log(e.target.getBoundingClientRect());
+  
+  console.log('Current scroll (X/Y)', window.pageXOffset, window.pageYOffset);
+  
+  console.log('height/width viewport', document.documentElement.clientHeight, document.documentElement.clientWidth);
+  
+  // Scrolling
+  // window.scrollTo(s1coords.left + window.pageXOffset, s1coords.top + window.pageYOffset)
+
+  /// Making it smooth
+  // window.scrollTo({
+  //   left: s1coords.left + window.pageXOffset,
+  //   top: s1coords.top + window.pageYOffset,
+  //   behavior: 'smooth',
+  // });
+
+   section1.scrollIntoView({behavior: 'smooth'}) // Modern browser (smooth)
+ });
+
+
+
+
+
+ /// 201. Types of Events and Event Handlers
+ const h1 = document.querySelector('h1');
+
+//  h1.addEventListener('mouseenter', function(e){
+//   alert('addEventListener: Great! You are reading the heading :D')
+//  })
+
+//  // another way :
+//  h1.onmouseenter = function(e){
+//   alert('addEventListener: Great! You are reading the heading :D')
+//  };
+
+
+ // removing it :
+ // if we want to use only once the EventListenr
+ const alertH1 = function(e){
+  alert('addEventListener: Great! You are reading the heading :D')
+
+  // h1.removeEventListener('mouseenter', alertH1)
+ }
+ h1.addEventListener('mouseenter', alertH1)
+
+ // we can remove it also if we want after some time :
+ setTimeout(() => h1.removeEventListener('mouseenter', alertH1), 3000)
+
+ /// html is directly <h1 onclick="alert('HTML alert')"></h1>;
