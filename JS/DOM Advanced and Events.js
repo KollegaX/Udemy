@@ -142,7 +142,6 @@ console.log(logo.getAttribute('designer'));
 // or set it :
 logo.setAttribute('company','Bankist')
 
-
 console.log(logo.src);
 console.log(logo.getAttribute('src'));
 
@@ -162,7 +161,6 @@ console.log(link.getAttribute('href'));
 
  // Don't use (!!!)
  logo.className = 'jonas'
-
 
 
 
@@ -227,3 +225,93 @@ console.log(link.getAttribute('href'));
  setTimeout(() => h1.removeEventListener('mouseenter', alertH1), 3000)
 
  /// html is directly <h1 onclick="alert('HTML alert')"></h1>;
+
+
+
+
+
+/// 202. Event Propagation: Bubbling and Capturing (Important!)
+// When an event occurs in the DOM, it doesn’t happen directly on the target element in isolation. Instead, the event goes through three phases:
+
+// Capturing phase (trickling down):
+// The event starts from the document root and travels down the DOM tree toward the target element. This is also called the capture phase. You can listen to events during this phase by setting { capture: true } in addEventListener.
+
+// Target phase:
+// The event reaches the target element itself. Here, the event listeners attached directly to the element are triggered.
+
+// Bubbling phase (trickling up):
+// After reaching the target, the event bubbles up from the target element back toward the document root, triggering any event listeners set on the ancestor elements along the way (unless stopPropagation() is called).
+
+// Example in simple terms:
+// Click on a <button> inside a <div> inside the <body>.
+// Capturing phase: document → body → div → button
+// Target phase: button itself
+// Bubbling phase: button → div → body → document
+
+
+
+
+
+/// 203. Event Propagation in Practice
+// rgb(255,555,555)
+const randomInt = (min,max) => Math.floor(Math.random() * (max - min + 1) + min);
+const randomColor = () => `rgb(${randomInt(0,255)},${randomInt(0,255)},${randomInt(0,255)})`
+console.log(randomColor(0,255));
+
+
+// document.querySelector('.nav__link').addEventListener('click', function(e){
+//   this.style.backgroundColor = randomColor();
+//   console.log('Link', e.target, e.currentTarget);
+
+//   // Stop propagation (still not good idea to use it)(but can fix in very complicated applications sometimes)
+//   // e.stopPropagation();
+  
+// })
+// document.querySelector('.nav__links').addEventListener('click', function(e){
+// this.style.backgroundColor = randomColor();
+//   console.log('Container', e.target, e.currentTarget);
+// })
+// document.querySelector('.nav').addEventListener('click', function(e){
+// this.style.backgroundColor = randomColor();
+//   console.log('Nav', e.target, e.currentTarget);
+// })
+
+// // if we want to catch events in the capturing phase, we can define a third parameter in the addEventListener function (true or false (false is like not having anything there, doesn't do nothing))
+// document.querySelector('.nav').addEventListener('click', function(e){
+// this.style.backgroundColor = randomColor();
+//   console.log('Nav', e.target, e.currentTarget);
+// }, true);
+// the others are searching for bubbling event, that's why are gonna be second,third...
+
+
+
+
+
+/// 204 Event Delegation: Implementing Page Navigation
+// document.querySelectorAll('.nav__link').forEach(function(el){
+//   el.addEventListener('click', function(e){
+//     e.preventDefault();
+    
+//     const id = this.getAttribute('href');
+    
+//     document.querySelector(id).scrollIntoView({
+//       behavior: 'smooth'});
+//   })
+// })
+// if we would attach like this to 10k, will do 10k copies of this copy and will not be good :
+// Implementing event delegation (through bubbling) :
+// 1. Add event listener to common parent element
+// 2. Determine what element originated the event
+document.querySelector('.nav__links').addEventListener('click', function(e){
+  console.log(e.target)
+   e.preventDefault();
+
+  // Matching strategy
+  if (e.target.classList.contains('nav__link')){
+    console.log('LINK');
+    
+    const id = e.target.getAttribute('href');
+    document.querySelector(id).scrollIntoView({
+      behavior: 'smooth'});
+  }
+})
