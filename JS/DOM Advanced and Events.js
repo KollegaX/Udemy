@@ -383,3 +383,289 @@ console.log(h1.parentElement.children);
   
     document.querySelector(`.operations__content--${clicked.dataset.tab}`).classList.add('operations__content--active')
   })
+
+
+
+
+
+
+
+
+  /// 207 . Passing Arguments to Event Handlers
+
+  // Menu fade animation 
+  const handleHover = function (e) {
+        if (e.target.classList.contains('nav__link')){
+      const link = e.target;
+      const siblings = link.closest('.nav').querySelectorAll('.nav__link');
+      const logo = link.closest('.nav').querySelector('img');
+
+
+      siblings.forEach(el => {
+        if (el !== link) el.style.opacity = this;
+      })
+
+      logo.style.opacity = this;
+    }
+  }
+
+  const nav = document.querySelector('.nav');
+
+  // Passing 'argument' into handler
+  nav.addEventListener('mouseover', handleHover.bind(0.5));
+  nav.addEventListener('mouseout',handleHover.bind(1)); 
+
+
+
+
+
+
+
+// 208. Implementing a Sticky Navigation: The Scroll Event
+
+// Sticky navigation
+//  const initialCoords = section1.getBoundingClientRect();
+
+// Scroll event
+// window.addEventListener('scroll', function(e){
+//   console.log(window.scrollY);
+//   if (window.scrollY > initialCoords.top) {
+//     nav.classList.add('sticky') 
+    
+//   } else nav.classList.remove('sticky')
+// })
+//  console.log(initialCoords);
+
+ // not good way to go with the scroll event
+
+ 
+
+
+
+
+
+
+ /// 209. Sticky Navigation : The Intersection Observer API
+
+// const obsCallBack = function (entries, observer) {
+//   entries.forEach(entry => {
+//     console.log(entry);
+    
+//   })
+// }
+
+// const obsOptions = {
+//   root : null,
+//   threshold : 0.1
+// };
+// const observer = new IntersectionObserver(obsCallBack, obsOptions);
+// observer.observe(section1);
+
+const header1 = document.querySelector('.header');
+const navHeight = nav.getBoundingClientRect().height;
+console.log(navHeight);
+
+
+const stickyNav = function (entries){
+  const [entry] = entries;
+  console.log(entry);
+
+  if (!entry.isIntersecting) nav.classList.add('sticky')
+  else nav.classList.remove('sticky')
+}
+
+const headerObserver = new IntersectionObserver(stickyNav, {
+  root: null, 
+  threshold : 0,
+  rootMargin : `-${navHeight}px`,
+});
+headerObserver.observe(header1);
+
+
+
+
+
+
+
+
+/// 210. Revealing Elements on Scroll
+const allSections1 = document.querySelectorAll('.section');
+
+
+const revealSection = function(entries, observer){
+
+  entries.forEach(entry => {
+    if (!entry.isIntersecting) return;
+    entry.target.classList.remove('section--hidden')
+    observer.unobserve(entry.target)
+  })
+
+};
+
+const sectionObserver = new IntersectionObserver
+(revealSection, {
+  root: null,
+  threshold: 0.15
+})
+allSections1.forEach(function(section) {
+  sectionObserver.observe(section);
+  section.classList.add('section--hidden')
+})
+
+
+/// 211. Fixing a Small Scrolling Bug
+// Instead of 
+// const revealSection = function(entries, observer){
+//   const [entry] = entries;
+
+//   if (!entry.isIntersecting) return;
+//   entry.target.classList.remove('section--hidden')
+//   observer.unobserve(entry.target)
+  
+// };
+
+// do this :
+// const revealSection = function(entries, observer){
+
+//   entries.forEach(entry => {
+//     if (!entry.isIntersecting) return;
+//     entry.target.classList.remove('section--hidden')
+//     observer.unobserve(entry.target)
+//   })
+
+// };
+
+
+
+
+
+/// 212. Lazy Loading Images
+// skipped 
+
+
+
+
+
+/// 213. Building a Slider Component: Part 1.
+// Selectors
+const slides = document.querySelectorAll('.slide');
+const btnLeft = document.querySelector('.slider__btn--left');
+const btnRight = document.querySelector('.slider__btn--right');
+const dotContainer = document.querySelector('.dots');
+
+let curSlide = 0;
+const maxSlide = slides.length;
+
+// Move slides: slide 0 -> 0%, slide 1 -> 100%, etc.
+// I prefer translateX for clarity.
+const goToSlide = function (slide) {
+  slides.forEach((s, i) => {
+    s.style.transform = `translateX(${100 * (i - slide)}%)`;
+  });
+};
+
+// Next / Prev
+const nextSlide = function () {
+  curSlide = curSlide === maxSlide - 1 ? 0 : curSlide + 1;
+  goToSlide(curSlide);
+  activateDot(curSlide);
+};
+
+const prevSlide = function () {
+  curSlide = curSlide === 0 ? maxSlide - 1 : curSlide - 1;
+  goToSlide(curSlide);
+  activateDot(curSlide);
+};
+
+// Buttons
+btnRight.addEventListener('click', nextSlide);
+btnLeft.addEventListener('click', prevSlide);
+
+
+/// 214 Building a Slider Component : Part 2.
+// Keyboard
+document.addEventListener('keydown', function (e) {
+  if (e.key === 'ArrowLeft') prevSlide();
+  if (e.key === 'ArrowRight') nextSlide();
+});
+
+// Dots
+const createDots = function () {
+  slides.forEach((_, i) =>
+    dotContainer.insertAdjacentHTML(
+      'beforeend',
+      `<button class="dots__dot" data-slide="${i}"></button>`
+    )
+  );
+};
+
+const activateDot = function (slide) {
+  document
+    .querySelectorAll('.dots__dot')
+    .forEach(dot => dot.classList.remove('dots__dot--active'));
+
+  const dot = document.querySelector(`.dots__dot[data-slide="${slide}"]`);
+  if (dot) dot.classList.add('dots__dot--active');
+};
+
+dotContainer.addEventListener('click', function (e) {
+  if (e.target.classList.contains('dots__dot')) {
+    // dataset values are strings — convert to number to avoid surprises
+    const slide = Number(e.target.dataset.slide);
+    curSlide = slide;
+    goToSlide(slide);
+    activateDot(slide);
+  }
+});
+
+// Init function to set initial state on page load / reload
+const init = function () {
+  createDots();      // create dot elements
+  goToSlide(0);      // position slides so slide 0 is visible
+  activateDot(0);    // activate dot 0
+};
+
+init();
+
+
+// 215. Lifecycle DOM Events
+// document.addEventListener("DOMContentLoaded", function(e){
+//   console.log('HTML parsed and DOM tree built!');
+// })
+
+// window.addEventListener('load', function(e){
+//   console.log('Page fully loaded', e);
+// })
+
+// window.addEventListener('beforeunload', function (e){
+//   e.preventDefault();
+//   console.log(e);
+//   e.returnValue = '';
+// })
+
+
+
+
+/// 216. Efficient Script Loading: defer and async
+// Regular - <script src="script.js">
+// Async - <script async src="script.js">
+// Defer - <script defer src = "script.js">
+
+
+/// (Regular) END OF BODY
+// Scripts are fetched and executed after the HTML is completely parsed 
+// Use if you need to support old browsers
+// You can, of course, use different strategies for different scripts. Usually a complete web applications includes more than just one script
+
+/// (Async) ASYNC IN HEAD
+// Scripts are fetched asynchronously and executed immediately
+// Usually the DOMContentLoaded event waits for all scripts to execute, except for async scripts. Som DOMContentLoaded does not wait for an async script
+// Scripts not guaranteed to execute in order
+// Use for 3rd-party scripts where order doesn't matter (e.g. Google Analytics)
+
+
+/// (Defer) DEFER IN HEAD
+// Scripts are fetched asynchronously and executed after the HTML is completely parsed
+// DOMContentLoaded event fires after defer script is executed
+// Scripts are executed in order
+// This is overall the best solution! Use for your own scripts, and when order matters (e.g. including a library)
