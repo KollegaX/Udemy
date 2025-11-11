@@ -226,7 +226,7 @@ console.log(arr.unique());
 
 
 
-/// Exercise 1 :
+/// 225. Exercise 1 :
 const Car = function (make,speed) {
         this.make =  make ;
         this.speed = speed;
@@ -238,7 +238,7 @@ Car.prototype.accelerate = function (){
 }
 
 Car.prototype.brake = function() {
-    this.speed -= 20;
+    this.speed -= 10;
     console.log(`${this.make} is going at ${this.speed} km/h`);
 }
 
@@ -459,4 +459,271 @@ ford.accelerate()
 ford.brake()
 ford.speedUS = 50;
 console.log(ford);
+
+
+
+
+/// 231. Inheritance Between "Classes" : Constructor Functions 
+
+const Person1 = function (firstName, year){
+    this.firstName = firstName;
+    this.birthYear = year;
+};
+
+Person1.prototype.calcAge = function (){
+    console.log(2037 - this.birthYear);
+};
+
+const Student = function (firstName, birthYear, course) {
+    // Person1(firstName,birthYear); // wouldn't work
+    Person1.call(this, firstName, birthYear);
+    this.course = course;
+}
+
+// Student.prototype = Person1.prototype; // This doesn't work at all
+// give an empty prototype (but right to do) / Linking prototypes
+Student.prototype = Object.create(Person1.prototype); // because now the prototype is pointing to Person1, to fix it we just :
+Student.prototype.constructor = Student;
+
+
+Student.prototype.introduce = function(){
+    console.log(`My name is ${this.firstName} and i study ${this.course}`);
+    
+}
+
+const mike = new Student('Mike', 2020, 'Computer Science');
+console.log(mike);
+mike.introduce();
+mike.calcAge();
+
+console.log(mike.__proto__);
+console.log(mike.__proto__.__proto__);
+
+console.log(mike instanceof Student);
+console.log(mike instanceof Person1);
+console.log(mike instanceof Object);
+
+
+
+/// 232. Exercise 3 :
+const Car2 = function (make,speed) {
+        this.make =  make ;
+        this.speed = speed;
+}
+
+Car2.prototype.accelerate = function (){
+    this.speed += 10;
+    console.log(`${this.make} is going at ${this.speed} km/h`);
+}
+
+Car2.prototype.brake = function() {
+    this.speed -= 5;
+    console.log(`${this.make} is going at ${this.speed} km/h`);
+}
+
+
+const EV = function (make,speed,charge) {
+    Car2.call(this, make, speed) 
+    this.charge = charge;
+}
+
+// Link the prototype
+EV.prototype = Object.create(Car2.prototype);
+
+EV.prototype.chargeBattery = function(chargeTo) {
+    this.charge = chargeTo;
+}
+
+EV.prototype.accelerate = function () {
+    this.speed += 20;
+    this.charge--;
+    console.log(
+        `${this.make} is going at ${this.speed} km/h, with a charge of ${this.charge}`
+    );
+    
+}
+
+
+const tesla = new EV('Tesla', 120, 23);
+console.log(tesla);
+tesla.chargeBattery(90);
+console.log(tesla);
+tesla.brake()
+tesla.brake()
+tesla.brake()
+
+
+
+// Let’s use a quick analogy 
+// Imagine you’re setting up a “family tree”:
+
+// SavingsAccount.prototype = Object.create(Example.prototype)
+// → “Make SavingsAccount a child of Example.”
+// (This sets up the family link — inheritance.)
+
+// SavingsAccount.prototype.constructor = SavingsAccount
+// → “But remember, SavingsAccount is its own person, not Example.”
+// (This fixes the name tag on the child.)
+
+
+/// 233. Inheritance Between "Classes": ES6 Classes
+class PersonCL {
+    constructor (fullName, birthYear){
+        this.fullName = fullName;
+        this.birthYear = birthYear;
+    }
+
+    // Instance methods
+    calcAge () {
+        console.log(2037 - this.birthYear);
+    }
+    
+    greet () {
+        console.log(`Hey ${this.fullName}`);
+        
+    }
+
+    get age () {
+        return 2037 - this.birthYear;
+    }
+
+    set fullName(name) {
+        if (name.includes(' ')) this._fullName = name;
+        else alert(`${name} is not a full name`);
+    }
+
+    get fullName() {
+        return this._fullName;
+    }
+
+    // Static method
+    static hey () {
+        console.log(`hey there`);
+        
+    }
+}
+
+
+
+
+class Student1 extends PersonCL {
+    constructor(fullName, birthYear, course = 'no course'){
+        // PersonCl.call() not need for that
+
+        // Always needs to happen first!
+        super(fullName, birthYear) // constructor function of the parent class, without it we cannot access the this. keyword
+        this.course = course;
+    }
+
+    introduce() {
+        console.log(`My name is ${this.fullName} and I study ${this.course}`);
+        
+    }
+
+
+    /// to overwrite for example the calcAge method, we just do a new one 
+    calcAge (){
+        console.log(`I'm ${2037 - this.birthYear} years old, but as a student I feel more like ${2037 - this.birthYear + 10}`);
+    }
+
+    // it comes first in the prototype chain, and that's why it doesn't take from the parent
+}
+
+const martha = new Student1('Martha Jones', 2012, 'Computer Science')
+console.log(martha);
+martha.introduce()
+martha.calcAge()
+
+
+
+
+
+
+
+/// 234. Inheritance Between "Classes" : Object.create();
+const PersonPhoto = {
+    calcAge () {
+        console.log(2037 - this.birthYear);
+    },
+
+    init (firstName, birthYear) {
+        this.firstName = firstName;
+        this.birthYear = birthYear
+    }
+}
+
+const steven1 = Object.create(PersonProto);
+
+const StudentProto = Object.create(PersonPhoto);
+
+StudentProto.init = function (firstName, birthYear, course) {
+    PersonProto.init.call(this, firstName, birthYear);
+    this.course = course;
+}
+
+StudentProto.introduce = function () {
+    console.log(`My name is ${this.firstName} and I study ${this.course}`);
+}
+
+
+
+const jake = Object.create(StudentProto);
+jake.init('Jake', 2008, 'CS');
+jake.introduce();
+jake.calcAge();
+
+
+console.log(10 * 500);
+
+
+
+/// 235. Another Class Example :
+class Account {
+    constructor (owner, currency, pin) {
+        this.owner = owner;
+        this.currency = currency;
+        this.pin = pin;
+        this.movements = [];
+        this.locale = navigator.language;
+
+        console.log(`Thanks for opening an account ${owner}`);
+        
+
+    }
+
+    // Public interface
+    deposit (val) {
+        this.movements.push(val);
+    }
+
+    withdral (val) {
+        this.deposit(-val)
+    }
+
+    approveLoan(val){
+        return true;
+    }
+
+
+    requestLoan(val) {
+        if (this.approveLoan(val)) {
+            this.deposit(val);
+            console.log(`Loan approved`);
+            
+        }
+    }
+}
+
+
+const acc1 = new Account('Jonas', 'EUR', 1111)
+
+// acc1.movements.push(250);
+// acc1.movements.push(-140);
+    acc1.deposit(250);
+    acc1.withdral(340);
+
+console.log(acc1);
+console.log(`PIN : ${acc1.pin}`);
+
+console.log(acc1);
 
