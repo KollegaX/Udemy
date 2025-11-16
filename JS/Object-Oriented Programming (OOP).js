@@ -168,6 +168,8 @@ console.log(jay instanceof Person);
 
 
 
+
+
 /// 222. Prototypes
 console.log(Person.prototype);
 
@@ -202,6 +204,13 @@ console.log(jonas.hasOwnProperty('species'));
 // | End of the chain       | `Object.prototype` → `null`                              |
 
 
+
+
+
+
+
+
+
 /// 224. Prototypal Inheritance on Built-In Objects
 console.log(jonas.__proto__);
 // Object.prototype (top of prototype chain)
@@ -221,6 +230,10 @@ Array.prototype.unique = function(){
     return [...new Set(this)]
 }
 console.log(arr.unique());
+
+
+
+
 
 
 
@@ -253,6 +266,9 @@ bmw.brake()
 bmw.brake()
 bmw.brake()
 bmw.accelerate()
+
+
+
 
 
 
@@ -303,6 +319,12 @@ jessica.greet()
 // 1. Classes are NOT hoisted (u can't use them before they are declarated)
 // 2. Classes are first-class citizens 
 // 3. Classes are executed in strict mode
+
+
+
+
+
+
 
 
 
@@ -392,6 +414,9 @@ User2.hey();
 
 
 
+
+
+
 /// 229. Object.create
 const PersonProto = {
     calcAge() {
@@ -417,6 +442,8 @@ console.log(steven.__proto__ === PersonProto);
 const sarah = Object.create(PersonProto);
 sarah.init('Sarah', 1979)
 sarah.calcAge();
+
+
 
 
 
@@ -463,6 +490,10 @@ console.log(ford);
 
 
 
+
+
+
+
 /// 231. Inheritance Between "Classes" : Constructor Functions 
 
 const Person1 = function (firstName, year){
@@ -502,6 +533,14 @@ console.log(mike.__proto__.__proto__);
 console.log(mike instanceof Student);
 console.log(mike instanceof Person1);
 console.log(mike instanceof Object);
+
+
+
+
+
+
+
+
 
 
 
@@ -551,9 +590,6 @@ console.log(tesla);
 tesla.brake()
 tesla.brake()
 tesla.brake()
-
-
-
 // Let’s use a quick analogy 
 // Imagine you’re setting up a “family tree”:
 
@@ -564,6 +600,15 @@ tesla.brake()
 // SavingsAccount.prototype.constructor = SavingsAccount
 // → “But remember, SavingsAccount is its own person, not Example.”
 // (This fixes the name tag on the child.)
+
+
+
+
+
+
+
+
+
 
 
 /// 233. Inheritance Between "Classes": ES6 Classes
@@ -603,9 +648,6 @@ class PersonCL {
     }
 }
 
-
-
-
 class Student1 extends PersonCL {
     constructor(fullName, birthYear, course = 'no course'){
         // PersonCl.call() not need for that
@@ -640,6 +682,8 @@ martha.calcAge()
 
 
 
+
+
 /// 234. Inheritance Between "Classes" : Object.create();
 const PersonPhoto = {
     calcAge () {
@@ -665,15 +709,18 @@ StudentProto.introduce = function () {
     console.log(`My name is ${this.firstName} and I study ${this.course}`);
 }
 
-
-
 const jake = Object.create(StudentProto);
 jake.init('Jake', 2008, 'CS');
 jake.introduce();
 jake.calcAge();
 
-
 console.log(10 * 500);
+
+
+
+
+
+
 
 
 
@@ -713,8 +760,6 @@ class Account {
         }
     }
 }
-
-
 const acc1 = new Account('Jonas', 'EUR', 1111)
 
 // acc1.movements.push(250);
@@ -727,3 +772,196 @@ console.log(`PIN : ${acc1.pin}`);
 
 console.log(acc1);
 
+
+
+
+
+
+
+
+
+
+// 236. Encapsulation: Private Class Fields and Methods
+// 1) Public fields
+// 2) Private fields
+// 3) Public methods
+// 4) Private methods
+// STATIC version of these 4
+
+
+// # Encapsulation in JavaScript: Fields and Methods
+// This document demonstrates **public fields, private fields, public methods, private methods, and static members** in JavaScript classes.
+
+
+// 1) PUBLIC FIELDS
+class AccountPublic {
+  // Public fields (available on every instance)
+  locale = navigator.language;
+  bank = 'Bankist';
+
+  constructor(owner, currency, pin) {
+    this.owner = owner;
+    this.currency = currency;
+    this.pin = pin;
+    this.movements = [];
+    console.log(`Thanks for opening an account, ${owner}`);
+  }
+}
+
+const acc10 = new AccountPublic('Jonas', 'EUR', 1111);
+console.log(acc10.locale);    // e.g., "en-US"
+console.log(acc10.bank);      // "Bankist"
+console.log(acc10.movements); // []
+
+// **Notes:**
+// * Public fields exist on **every instance**.
+// * Not part of the prototype.
+
+
+
+
+// 2) PRIVATE FIELDS
+class AccountPrivate {
+  #movements = [];
+  #pin;
+
+  constructor(owner, currency, pin) {
+    this.owner = owner;
+    this.currency = currency;
+    this.#pin = pin;
+  }
+
+  deposit(val) {
+    this.#movements.push(val);
+  }
+
+  withdraw(val) {
+    this.deposit(-val);
+  }
+
+  getMovements() {
+    return this.#movements;
+  }
+}
+
+const acc2 = new AccountPrivate('Jonas', 'EUR', 1111);
+acc2.deposit(300);
+acc2.withdraw(100);
+console.log(acc2.getMovements()); // [300, -100]
+// console.log(acc2.#movements) // ❌ Error: private field
+// **Notes:**
+// * Private fields cannot be accessed outside the class.
+// * Use getter methods for safe access.
+
+
+
+
+// 3) PUBLIC METHODS
+class AccountMethods {
+  #movements = [];
+
+  constructor(owner, currency, pin) {
+    this.owner = owner;
+    this.currency = currency;
+    this.pin = pin;
+  }
+
+  deposit(val) {
+    this.#movements.push(val);
+    console.log(`${val} deposited`);
+  }
+
+  withdraw(val) {
+    this.deposit(-val);
+    console.log(`${val} withdrawn`);
+  }
+
+  getMovements() {
+    return this.#movements;
+  }
+}
+
+const acc3 = new AccountMethods('Jonas', 'EUR', 1111);
+acc3.deposit(500);             // 500 deposited
+acc3.withdraw(200);            // 200 withdrawn
+console.log(acc3.getMovements()); // [500, -200]
+// **Notes:**
+// * Public methods provide controlled access to private data.
+// * Methods are shared across instances via the prototype.
+
+
+
+
+// 4) Private Methods
+class AccountPrivateMethod {
+  #movements = [];
+  #pin;
+
+  constructor(owner, currency, pin) {
+    this.owner = owner;
+    this.currency = currency;
+    this.#pin = pin;
+  }
+
+  deposit(val) {
+    this.#movements.push(val);
+  }
+
+  #approveLoan(val) {
+    return true;
+  }
+
+  requestLoan(val) {
+    if (this.#approveLoan(val)) {
+      this.deposit(val);
+      console.log('Loan approved');
+    }
+  }
+}
+
+const acc4 = new AccountPrivateMethod('Jonas', 'EUR', 1111);
+acc4.deposit(100);
+acc4.requestLoan(500);
+console.log(acc4.getMovements?.()); // optional chaining because getter not defined
+// **Notes:**
+// * Private methods are only accessible **inside the class**.
+// * Used to hide internal logic.
+
+
+
+
+// STATIC FIELDS & METHODS
+class AccountStatic {
+  static bankName = 'Bankist';
+
+  static identifyBank() {
+    console.log(`This bank is ${this.bankName}`);
+  }
+
+  constructor(owner, currency, pin) {
+    this.owner = owner;
+    this.currency = currency;
+    this.pin = pin;
+  }
+}
+
+console.log(AccountStatic.bankName); // Bankist
+AccountStatic.identifyBank();        // This bank is Bankist
+
+const acc5 = new AccountStatic('Jonas', 'EUR', 1111);
+console.log(acc5.bankName);          // undefined (static not on instance)
+
+
+// **Notes:**
+// * Static members belong to the class, not instances.
+// * Cannot access instance data (`this.movements`) from static methods.
+
+
+// | Feature        | Syntax                  | Accessible Where    | Shared via Prototype? |
+// | -------------- | ----------------------- | ------------------- | --------------------- | 
+// | Public Field   | `field = value;`        | Anywhere (instance) | No                    | 
+// | Private Field  | `#field = value;`       | Inside class only   | No                    | 
+// | Public Method  | `method() {}`           | Anywhere (instance) | Yes                   | 
+// | Private Method | `#method() {}`          | Inside class only   | Yes (for instances)   | 
+// | Static Field   | `static field = value;` | Class only          | No                    | 
+// | Static Method  | `static method() {}`    | Class only          | No                    | 
