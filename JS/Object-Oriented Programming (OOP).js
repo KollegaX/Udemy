@@ -965,3 +965,85 @@ console.log(acc5.bankName);          // undefined (static not on instance)
 // | Private Method | `#method() {}`          | Inside class only   | Yes (for instances)   | 
 // | Static Field   | `static field = value;` | Class only          | No                    | 
 // | Static Method  | `static method() {}`    | Class only          | No                    | 
+
+
+
+
+
+
+
+
+
+
+/// 237. Chaining Methods
+class Account123 {
+  locale = navigator.language;
+  bank = 'Bankist';
+  #movements = [];
+  #pin;
+
+  constructor(owner, currency, pin) {
+    this.owner = owner;
+    this.currency = currency;
+    this.#pin = pin;
+
+    // this.movements = [];
+    // this.locale = navigator.language;
+
+    console.log(`Thanks for opening an account, ${owner}`);
+  }
+
+  // Public interface (API)
+  getMovements() {
+    return this.#movements;
+    // Not chaninable
+  }
+
+  deposit(val) {
+    this.#movements.push(val);
+    return this;
+  }
+
+  withdral(val) {
+    this.deposit(-val);
+    return this;
+  }
+
+  #approveLoan(val) {
+    // Fake method
+    return true;
+  }
+
+  requestLoan(val) {
+    if (this.#approveLoan(val)) {
+      this.deposit(val);
+      console.log(`Loan approved`);
+    }
+    return this;
+  }
+}
+
+const acc1234 = new Account('Jonas', 'EUR', 1111);
+// acc1.deposit(300);
+// acc1.withdraw(100);
+const movements1 = acc1234
+  .deposit(300)
+  .withdraw(100)
+  .withdraw(50)
+  .requestLoan(25000)
+  .withdraw(4000)
+  .getMovements();
+
+console.log(acc1);
+// console.log(acc1.#movements);
+// Account.#test();
+console.log(movements);
+
+
+const acc123 = new Account123('Jonas', 'EUR', 1111);
+console.log(acc123);
+const movements = acc123.deposit(300).withdral(100).withdral(200).withdral(100).getMovements();
+const newMov = movements.reduce((acc, e) => acc + e);
+console.log(newMov);
+
+debugger
