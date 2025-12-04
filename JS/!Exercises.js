@@ -139,3 +139,120 @@ console.log("ready!");
 
 
 
+// Countdown
+function countdown(n) {
+  let cur = n;
+  const id = setInterval(() => {
+    console.log(cur);
+    if (cur-- <= 0) clearInterval(id);
+  }, 1000);
+}
+countdown(5);
+
+
+// Delay Function (Using setTimeout)
+function delay(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+// usage:
+delay(1000).then(() => console.log("done"));
+
+
+// Promise that resolves after 2 seconds
+function waitTwoSecond(){
+  return new Promise(resolve => setTimeout(resolve,2000))
+}
+waitTwoSecond().then(console.log('finished'))
+
+
+// Fake API Call
+function fakeAPICall(){
+  const delay = 1000 + Math.random() * 2000; 
+  return new Promise(resolve => {
+    setTimeout(() => resolve({id: 1, name: 'John'}), delay);
+  });
+}
+fakeAPICall().then(data => console.log('got', data))
+
+
+// Promise Chain
+function step(ms, msg) {
+  return new Promise(resolve => setTimeout(() => { console.log(msg); resolve()}, ms));
+}
+
+step(1000, 'Step 1')
+.then(() => step(1500, 'Step 2'))
+.then(() => step(500, 'step 3'));
+
+
+// Convert a callback to a Promise
+function loadData(callback) {
+  setTimeout(() => callback("data"), 1000);
+}
+
+function loadDataPromise() {
+  return new Promise(resolve => loadData(resolve));
+}
+
+loadDataPromise().then(data => console.log(data));
+
+
+
+
+// Use async/await to fetch fake data
+function fakeAPICall(){
+  const delay = 1000 + Math.random() * 2000; 
+  return new Promise(resolve => {
+    setTimeout(() => resolve({id: 1, name: 'John'}), delay);
+  });
+}
+
+async function getUser(){
+  const user = await fakeAPICall();
+  return user;
+}
+
+(async () => {
+  console.log(await getUser());
+})();
+
+
+// Run tasks sequentially
+function step(ms, msg) {
+  return new Promise(resolve => setTimeout(() => { console.log(msg); resolve()}, ms));
+}
+
+async function sequential() {
+  await step(2000, 'A done');
+  await step(1000, 'B done');
+  await step(3000, 'C done')
+}
+sequential();
+
+
+// Run tasks in parallel (Promise.all)
+function task(name, ms){
+  return new Promise(resolve => setTimeout(() => resolve(name + ' finished'),ms));
+}
+
+async function parallel(){
+  const results = await Promise.all([task('A', 2000), task('B', 4000), task('C', 3000)]);
+  console.log(results);
+}
+parallel()
+
+
+// Timeout a Promise
+function delay(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function withTimeout(promise,ms) {
+  return Promise.race([
+    promise,
+    new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), ms))
+  ]);
+}
+withTimeout(delay(3000), 2000).catch(err => console.error(err.message));
+
