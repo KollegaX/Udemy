@@ -256,3 +256,131 @@ function withTimeout(promise,ms) {
 }
 withTimeout(delay(3000), 2000).catch(err => console.error(err.message));
 
+
+
+
+// 1. Recursion & stack
+// Exercise 1.1 (easy)
+// Write a recursive sum(n) that returns 1 + 2 + ... + n. What happens if n is very large?
+Expected: sum(5) === 15.
+
+
+function sum(n) {
+    if (n === 0) return 0;
+    return n + sum(n - 1);
+}
+console.log(sum(5));
+
+
+
+
+// // Exercise 1.2 (medium)
+// // Write a recursive function flatten(arr) that flattens nested arrays of numbers to one-level array (e.g. [1,[2,[3]],4] → [1,2,3,4]).
+function flatten(arr){
+    let result = [];
+
+    for (const item of arr){
+        if (Array.isArray(item)){
+            result = result.concat(flatten(item));
+        } else {
+            result.push(item);
+        }
+    }
+
+    return result;
+}
+console.log(flatten([5,3,[4,5,[2,3,7]]]));
+// // flatten([5,3,[4,5,[2,3,7]]]), should be with array at the beginning, if I do like (5,3,[2,3,4]), it could open an error;
+
+
+// // Exercise 1.3 (hard)
+// // Write deepClone(obj) using recursion that copies objects/arrays (no functions, no DOM, no circular refs). 
+// What happens with circular references? How to detect them?
+function deepClone(obj) {
+    if (obj === null || typeof obj !== 'object'){
+        return obj;
+    }
+
+    if (Array.isArray(obj)){
+        return obj.map = deepClone(obj);
+    };
+
+    const copy = {};
+    for (const key in obj) {
+        if (obj.hasOwnProperty(key)){
+            copy[key] = deepClone(obj[key]);
+        }
+    }
+
+    return copy;
+}
+
+
+
+// // 2. Rest parameters and spread syntax
+// // Exercise 2.1 (easy)
+// // Write concatAll(...arrays) that accepts any number of arrays and returns a single array with all elements.
+
+function concatAll(...arrays) {
+    return arrays.reduce((acc, arr) => acc.concat(arr), []);
+}
+console.log(concatAll([1,2],[3,4],[5])); // [1,2,3,4,5]
+
+
+
+// // Exercise 2.2 (medium)
+// // Write applyMax(fn, arr) that calls fn with arr elements as arguments using spread and returns the value. Example: applyMax(Math.max, [3,7,2]) === 7.
+function applyMax(fn, arr) {
+   return fn(...arr);
+}
+console.log(applyMax(Math.max, [3, 7, 2])); // 7
+
+
+
+// 3. Variable scope, closure
+// Exercise 3.2 (medium)
+// Implement makeCounter(start) returning an object with inc() and value() that use closures to keep private state.
+
+function makeCounter(start){
+    let count = start;
+
+    return {
+        inc(){
+            count++;
+        },
+        value(){
+            return count;
+            
+        }
+    }
+}
+
+
+// Exercise 3.3 (hard)
+// Explain lexical scope by writing a function makeAdders() that returns an array of functions [f0, f1, f2] where fi() returns i. Do it first incorrectly (common pitfall) and then correctly.
+
+// use block-scoped let in the loop
+function makeAdders() {
+  const arr = [];
+  for (let i = 0; i < 3; i++) {
+    arr.push(() => i); // each arrow closes over a different i
+  }
+  return arr;
+}
+
+// OR
+
+// create a new scope per iteration (IIFE / factory)
+function makeAdders() {
+  const arr = [];
+  for (let i = 0; i < 3; i++) {
+    arr.push((function(n) {
+      return function() { return n; };
+    })(i)); // n is the captured value
+  }
+  return arr;
+}
+const [f0,f1,f2] = makeAdders();
+console.log(f0(), f1(), f2()); // should log: 0 1 2
+
+
