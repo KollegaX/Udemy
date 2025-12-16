@@ -384,3 +384,144 @@ const [f0,f1,f2] = makeAdders();
 console.log(f0(), f1(), f2()); // should log: 0 1 2
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function sumArray(arr){
+    let reduced = arr.reduce((a,b) => a + b);
+    return reduced;
+
+}
+console.log(sumArray([2,3,4,6,7]));
+
+
+function findTheL(arr){
+    let biggestNum = 0;
+    for (let i = 0; i < arr.length; i++){
+        if (biggestNum < arr[i]){
+            biggestNum = arr[i];
+        }
+    }
+    console.log(biggestNum);
+}
+findTheL([2,5,7,9,3,2])
+
+
+
+function reverseString(str){
+    // console.log(str.split('').reverse().join('')); // Like that or without the methods
+    let result = [];
+    for (let i = 0; i < str.length; i++){
+        result.push(str[str.length - i - 1]);
+    }
+    console.log(result.join(''));
+    // or without .join just str[i] = str[str.length - i - 1]
+}
+reverseString('helloMyG');
+
+
+
+function arrayMethods(arr) {
+    let f = arr.filter(a => a > 10).map(a => a * 2);
+    return f;
+}
+console.log(arrayMethods([2,4,6,8,12,15,17,19]));
+
+
+
+const user = {
+  name: "John",
+  age: 30,
+  skills: ["JS", "HTML"]
+};
+user.skills.push('TypeScript');
+user.age++;
+console.log(user.skills.join(', '));
+
+
+
+function convertable(arr){
+    let result = [];
+    for (let single of Object.values(arr)){
+        result.push(single)
+    }
+
+    console.log(result.flat());
+}
+
+// or without using .flat method, doing a new function and doing recursion on it and just then checking it.
+convertable(user)
+
+
+
+function counter(){
+    let count = 0;
+    return function () {
+        count++;
+        console.log(count);
+    }
+}
+const closures = counter() // we need to store it because otherwise it loses it's reference.
+closures()
+closures()
+closures()
+
+
+
+// Promise version
+const myPromise = new Promise(resolve => {
+    setTimeout(() => {
+        resolve('Done');
+    }, 2000);
+}).then(x => x);
+
+// Async function version 1
+async function asyncFunc1() {
+    const result = await new Promise(resolve => {
+        setTimeout(() => {
+            resolve('Done');
+        }, 2000);
+    });
+    return result;
+}
+
+// Call asyncFunc1
+(async () => {
+    const value1 = await asyncFunc1();
+    console.log(value1); // "Done" after 2s
+})();
+
+// Async function version 2 with try/catch
+async function asyncFunc2() {
+    try {
+        const result = await new Promise(resolve => {
+            setTimeout(() => {
+                resolve('Done');
+            }, 2000);
+        });
+        return result;
+    } catch {
+        throw new Error("don't work Mate");
+    }
+}
+
+// Call asyncFunc2
+(async () => {
+    const value2 = await asyncFunc2();
+    console.log(value2); // "Done" after 2s
+})();
+
+
