@@ -353,3 +353,161 @@ type us_er = {
 // Nullish Coalescing
 let input = '';
 const didProvideInput = input ?? false; // searching for null and undefined
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// to configure how typescript will behavior :
+// tsc --init, then it creates a typescript configuration file
+
+// strict → always true (Turns on all important type checks)
+// target → modern JS (JS version TypeScript outputs)
+// outDir / rootDir → clean project (Where compiled JS goes, Where TS source files live)
+// moduleResolution: node (How imports are resolved (Node-style))
+// esModuleInterop: true (Makes import express from 'express' work)
+
+
+// Besides configuring compilation & type checking, you can also use the tsconfig.json file to enable some "quality of life" checks - checks that are not directly related to types but that can help you improve your code quality.
+// {
+//   "noUnusedLocals": true, // helps you detect unused variable
+//   "noUnusedParameters": true, // helps you detect unused function parameters
+//   "noFallthroughCasesInSwitch": true // helps you detect switch cases without break or return
+// }
+
+
+// Example tsconfig.json & Deep Dive
+// The tsconfig.json file can be scary! Over all those years, dozens of options and settings have been added - and trying to make sense of them all is almost impossible.
+
+// Thankfully, you really don't need to understand them all, though!
+
+// Very often, you'll be working in a project created with build tools like Vite which create a fitting tsconfig.json file for you.
+
+// If you DO want to understand some of the settings you see in those generated tsconfig.json files, the official reference can be helpful.
+
+// And if you need a basic tsconfig.json file because you're working in a project that doesn't come with one, you can consider using this one (also available here and described in greater detail here):
+
+// {
+//   "target": "ES2022", // Good for modern browsers or Node.js
+//   "compilerOptions": {
+//     "esModuleInterop": true, // Ensures ESM and CJS imports work together well
+//     "skipLibCheck": true, // Ensures .d.ts files from 3rd libraries are not type-checked
+//     "target": "es2022", // Sets a relatively modern ECMAScript version as compilation target
+//     "allowJs": true, // Allows importing .js files into .ts (helpful when migrating projects)
+//     "strict": true, // Ensures strict type checking (i.e., noImplicitAny etc)
+//     "noUncheckedIndexedAccess": true, // Adds undefined as a value when accessing by index
+//     // "noImplicitOverride": true, // Enable this when working with classes & inheritance
+//     "noUnusedLocals": true, // to avoid unused variables
+//     "module": "NodeNext", // Supports both ESM & CJS modules / imports
+//     "outDir": "dist", // Store compiled files in "dist" folder
+//     "sourceMap": true, // Enables source maps for easier debugging
+//     "lib": ["es2022", "dom", "dom.iterable"] // Or without "dom" libs when building for Node
+//   }
+// }
+// The above configuration will likely NOT work when using third-party build tools or bundlers - but, again, if you are using such tools, you'll typically also use them or some helper tools to create projects with a pre-defined tsconfig.json file.
+
+
+// to compile the ts file in a modern js file just simply type : (tsc) when compiling
+// u can run tsc --watch (it will watch ur file and every time u save a change it saves into the js file)(retrigerring a compilation)
+
+
+
+// data :
+// initial amount
+// annual conribution
+// expected return
+// duration
+
+type InvestmentData = {
+    initialAmount : number,
+    annualContribution : number,
+    expectedReturn : number,
+    duration : number;
+};
+
+type InvestmentResult = {
+    year : string,
+    totalAmount : number,
+    totalContributions : number,
+    totalInterestEarned : number;
+};
+
+type CalculationResult = InvestmentResult[] | string;
+
+function calculateInvestment(data : InvestmentData): CalculationResult {
+    const {initialAmount, annualContribution, expectedReturn, duration} = data;
+
+    if (initialAmount < 0) {
+        return 'Initial investment amount must be at least zero.'
+    }
+
+    if (duration <= 0) {
+        return 'No valid amount of years provided.'
+    }
+
+    if (expectedReturn < 0) {
+        return 'Expected return must be at least zero.'
+    }
+
+
+    let total = initialAmount;
+    let totalContributions = 0;
+    let totalInterestEarned = 0;
+
+    const annualResults: InvestmentResult[] = [];
+
+    for (let i = 0; i < duration; i++){
+        total = total * (1 + expectedReturn);
+        totalInterestEarned = total - totalContributions - initialAmount;
+        totalContributions = totalContributions + annualContribution;
+        total = total + annualContribution;
+
+        annualResults.push({
+            year : `Year ${i + 1}`,
+            totalAmount : total,
+            totalInterestEarned : totalInterestEarned,
+            totalContributions
+        })
+    }
+
+
+    return annualResults;
+}
+
+function printResults(results : CalculationResult){
+    if ( typeof  results === 'string'){
+        console.log(results);
+        return;
+    }
+
+    for (const yearEndResult of results){
+        console.log(yearEndResult.year);
+        console.log(`Total: ${yearEndResult.totalAmount.toFixed(0)}`)   
+        console.log(`Total Contributions: ${yearEndResult.totalContributions.toFixed(0)}`);
+        console.log(`Total Interest Earned: ${yearEndResult.totalInterestEarned.toFixed(0)}`);
+        console.log(`-----------------------------`);
+        
+    }
+}
+
+const investmentData : InvestmentData = {
+    initialAmount : 5000,
+    annualContribution : 500,
+    expectedReturn : 0.08,
+    duration: 10
+};
+const results = calculateInvestment(investmentData)
+
+printResults(results)
+
+
+
