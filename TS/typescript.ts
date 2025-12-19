@@ -511,3 +511,236 @@ printResults(results)
 
 
 
+
+
+
+
+
+// TypeScript & Modern JavaScript
+// Basic Modern JavaScript Syntax Knowledge
+// How TypeScript May Convert Syntax
+// (TypeScript is helping run JavaScript in much older browsers)
+
+
+
+// Default function Parameters
+const add = (a : number, b : number = 1) => a + b;
+
+const printOutput: (a: number | string) => void = output => console.log(output);
+
+const button = document.querySelector('.button');
+
+if (button) {
+    button.addEventListener('click', event => console.log(event));
+}
+
+printOutput(add(5))
+
+
+// The Spread Operator (...)
+const _hobbies = ['Sports','Cooking'];
+const activeHobbies = ['Hiking'];
+activeHobbies.push(..._hobbies)
+
+const person = {
+    firstName : 'Max',
+    _age : 30 
+}
+
+const copiedPerson = person; // reference
+const _copiedPerson = {...person}; // copied
+
+
+
+
+
+// Rest Parameters
+
+const add1 = (...numbers: number[]) => {
+    return numbers.reduce((curResult, curValue) => {
+        return curResult + curValue;
+    }, 0)
+}
+
+const addedNumbers = add1(5, 10, 2, 3.7)
+console.log(addedNumbers);
+
+
+
+
+// Array & Object Destructuring
+const _hobby1 = _hobbies[0];
+const _hobby2 = _hobbies[1];
+const [hobby1, hobby2, ...remainingHobbies ] = _hobbies;
+
+
+const {firstName, _age} = person; // this have to be the properties/names from the objects, u can't imagine names like in arrays, but u can change the variable from example (firstname) to (userName) through a colon {firsName : userName, _age} = person;
+
+
+
+
+/// CLASSES & INTERFACES
+// Creating & Using Classes
+// Constructor Functions & Properties
+// Methods
+// Inheritance
+// Interfaces
+
+
+// What are Classes ? - they exist in vanilla JS2 (Classes are blueprints for objects)
+// the idea is to create Class definition once and create multiple object instances based of this class
+// so that we will have multiple objects that have the same shape, the same methods, but different data/value
+
+
+// class _User {
+//     name: string;
+//     age: number;
+
+//     constructor(name: string, age: number) {
+//         this.name = name;
+//         this.age = age;
+//     }
+// }
+// new _User('bro',12)
+
+// Alternative version of classes so it doesnt be harder from JS (shortcut)
+class _User {
+    constructor(public name: string, public age?: number) { }
+}
+const jon = new _User('Jon Jones', 20);
+const fred = new _User('Fred', 29);
+console.log(jon,fred)
+
+
+
+// public and private 
+// there is also (protected), which works like private but also makes sure that the property may be accessed in classes that inherit the given class
+class Admin {
+    #role = 'ADMIN'; // you can use the JS private property in TS as well
+
+    public hobbies : string[] = [];
+
+    constructor(public name: string, public age: number){}
+
+    greet(){
+        console.log(`My age :` + this.age);
+        
+    }
+}
+const maximiliam = new Admin('Max',29);
+maximiliam.age = 37
+
+
+
+
+// READONLY keyword
+class Read {
+    readonly hobbies: string[] = [];
+}
+// readonly can be accessed, it's like public but can't be changed, only read
+// if the readonly is a string, u can use the .push() method, because it mutates the existed one
+
+
+
+
+// Understanding Getters 
+class US_R {
+    constructor(private firstName: string, private lastName: string){}
+
+    get fullName(){
+        return this.firstName + ' ' + this.lastName;
+    }
+}
+const max1 = new US_R('Max', 'Schwarzmüller');
+console.log(max1.fullName);
+// u define it like a property, u don't try to access it like a method
+
+
+
+
+// Setting Values with Setters
+class U_SER {
+    private _firstName: string = '';
+    private _lastName : string = '';
+
+    set firstName(name: string){
+        if(name.trim() === ''){
+            throw new Error('Invalid name.');
+        }
+        this._firstName = name;
+    }
+        set lastName(name: string){
+        if(name.trim() === ''){
+            throw new Error('Invalid name.');
+        }
+        this._lastName = name;
+    }
+
+
+    get fullName(){
+        return this._firstName + ' ' + this._lastName;
+    }
+}
+
+
+// Understanding Inheritance
+class Employee extends U_SER {
+    constructor (public jobTitle: string) {
+        super();
+        // super.firstName = 'Max';
+    }
+
+    work() {
+        // ...
+    }
+}
+
+
+
+
+// THE "PROTECTED" MODIFIER 
+// protected is an access modifier.
+// It controls where a property or method can be used.
+// Rule of thumb:
+// protected = usable inside the class and its subclasses, but NOT outside
+
+
+// 1. Inside the class
+// Code written inside the same class where the member is declared.
+// The class can freely use its own protected properties and methods.
+
+
+// 2. Inside a subclass (child class)
+// Code written inside a class that extends another class.
+// A subclass inherits the protected members from its parent, so it can use them as if they were its own.
+
+
+// 3. Outside the class
+// Any code that is not inside the class or its subclasses
+// (for example: objects, functions, or files using the class).
+// Even if you create an object of the class or subclass, you cannot access protected members directly.
+
+
+// Inside class → can access
+// Inside subclass → can access
+// Outside (object or other code) → cannot access
+
+
+
+
+/// Making Sense Of Abstract Classes
+// used as Base class, that is not used/duplicated but extended
+abstract class UIElement {
+    constructor (public identifier : string) {}
+
+    clone (targetLocation: string) {
+        // logic to duplicate the UI element
+    }
+}
+class SideDrawerElement extends UIElement {
+    constructor(public identifier: string, public position: 'left' | 'right'){
+        super(identifier)
+    }
+}
+
+
