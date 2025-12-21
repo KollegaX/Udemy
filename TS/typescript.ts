@@ -355,18 +355,6 @@ let input = '';
 const didProvideInput = input ?? false; // searching for null and undefined
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 // to configure how typescript will behavior :
 // tsc --init, then it creates a typescript configuration file
 
@@ -508,10 +496,6 @@ const investmentData : InvestmentData = {
 const results = calculateInvestment(investmentData)
 
 printResults(results)
-
-
-
-
 
 
 
@@ -744,3 +728,447 @@ class SideDrawerElement extends UIElement {
 }
 
 
+
+
+// Interface :
+// Object type definitions & contracts that can be implemented by classes
+interface Authenticatable {
+    email : string;
+    password : string;
+
+    login(): void;
+    logout(): void;
+}
+
+let user: Authenticatable;
+
+user = {
+    email: 'test@example.com',
+    password: 'abc1',
+    login() {
+        // reach out to a database, check credentials, create a session
+    },
+    logout(){}
+}
+
+
+// Interfaces vs Type Aliases & Understanding Declaration Merging
+
+// u could've instead using interface, just create a type keyword instead of interface
+// why to use interface ?
+// when u want to add something to the interface, the interface merges and it doesnt show an error
+// You use interface when you expect the shape to be extended or merged later. (it comes to personal preference)
+
+
+// A lesser known but nonetheless interesting feature of TypeScript interfaces is that you can also use them to define function types.
+// For example, you might want to define the type of a sum function that takes two numbers as input and returns their sum.
+// You could write this code:
+
+type SumFn = (a: number, b: number) => number; // function type
+let sum: SumFn; // making sure sum can only store values of that function type
+sum = (a, b) => a + b; // assigning a value that adheres to that function type
+
+// Alternatively, you can also define the SumFn type via an interface:
+interface SumFn1 {
+  (a: number, b: number): number;
+}
+// It's up to you which alternative you prefer.
+// Typically, you'll encounter the first version (type SumFn) more often but it's worth knowing about the alternative, too.
+
+
+
+
+// Implementing Interfaces
+// u can use them in conjunction with classes
+class AuthenticatableUser implements Authenticatable{
+    constructor(
+        public userName: string,
+        public email: string, 
+        public password: string) {
+    }
+
+    login() {
+
+    }
+
+    logout() {
+        
+    }
+
+}
+
+// Extending Interfaces
+interface AuthenticatableAdmin extends Authenticatable {
+    role : 'admin' | 'superadmin';
+}
+// interfaces is pure typescript feature and does not exist in JS and gets compiled away.
+
+
+
+
+
+
+/// Advanced TypeScript Usage
+// Intersection Types
+
+type FileData = {
+    path: string;
+    content: string;
+}
+
+type DataBaseData = {
+    connectionUrl : string;
+    credentials: string;
+}
+
+type Status = {
+    isOpen: boolean;
+    errorMessage?: string;
+
+}
+
+// intersection (combination of those 2)
+type AccessedFileData = FileData & Status;
+type AccessedDatabaseData = DataBaseData & Status
+// or with interfaces
+interface AccessedFileData1 extends FileData, Status {}
+interface AccessedDatabaseData1 extends DataBaseData,Status {}
+
+
+
+
+// More on type Guards
+type FileSource = {path: string};
+const fileSource : FileSource = {
+    path: 'some/path/to/file.csv',
+};
+
+type DBSource = { connectionUrl: string};
+const dbSource: DBSource = {
+    connectionUrl: 'some-connection-url',
+};
+
+
+type Source = FileSource | DBSource;
+
+function loadData(source: Source) {
+    //Open + read file OR reach out to database server
+    if ('path' in source){
+        // source.path; => use that to open the file
+        return;
+    }
+    // source.connectionUrl; => to reach out to database
+}
+
+
+
+
+
+// Discriminated Unions
+type FileSource1 = {type: 'file'; path: string};
+const fileSource1 : FileSource1 = {
+    type: 'file',
+    path: 'some/path/to/file.csv',
+};
+
+type DBSource1 = { type: 'db'; connectionUrl: string};
+const dbSource1: DBSource1 = {
+    type: 'db',
+    connectionUrl: 'some-connection-url',
+};
+
+type Source1 = FileSource1 | DBSource1;
+
+function loadData1(source: Source1) {
+    if (source.type === 'file'){
+        source.path
+        // source.path; => use that to open the file
+        return;
+    }
+    source.connectionUrl
+    // source.connectionUrl; => to reach out to database
+}
+
+
+
+
+
+
+
+
+/// Type Guards via "instanceof"
+// instanceof is another way of finding with which kind of value we're working
+class USER {
+    constructor(public name: string){}
+
+    join() {
+        // ...
+    }
+}
+
+class ADMIN {
+    constructor(permissions: string[]) {}
+
+    scan() {
+        // ...
+    }
+};
+const user_ino = new USER('Max');
+const admin_ino = new ADMIN(['ban','restore']);
+
+type Entity = USER | ADMIN;
+
+function init(entity: Entity){
+    if (entity instanceof USER){
+        entity.join();
+        return;
+    }
+
+    entity.scan();
+};
+
+
+
+
+
+/// Outsourcing Type Guards & Using Type Predicates
+function isFile(source: Source1){
+    return source.type === 'file';
+}
+// source is FileSource is a boolean but with extra information attached to it
+
+
+
+
+
+
+/// Function Overloads
+// depending on which definition, we can tell if we become an array it's return is gonna be a number and for the string, it comes out as a String
+function getLength(val: any[]): number;
+function getLength(val: string): string;
+function getLength(val: string | any[]) {
+    // return val.length; // X words
+    if (typeof val === 'string'){
+        const numberOfWords = val.split(' ').length;
+        return `${numberOfWords} words`;
+    }
+    return val.length;
+}
+const numOfWords = getLength('does this work?')
+numOfWords.length;
+const numItems = getLength(['Sports', 'Cookies'])
+
+
+
+
+
+/// Making Sense of Index Types
+// 1. Objects can have unknown property names
+// Index types exist because not all object keys are known ahead of time.
+// TypeScript allows object types where keys are not predefined.
+
+// Index types allow any number of properties, including none.
+// All property keys must match a single key type (usually string).
+// All property values must conform to a single value type.
+// The rule applies to every property, even those added later.
+// Type checking happens when properties are assigned, not at runtime.
+// Any explicitly defined property must be compatible with the index signature.
+// Index types are best suited for dictionary-like / map-like objects, not fixed data structures.
+type DataStore = {
+    [prop: string] : number | boolean;
+};
+
+let store: DataStore = {};
+store.id = 5;
+store.isOpen = false;
+
+
+
+
+
+
+
+/// Constant Types with "as const"
+let roles = ['admin', 'guest', 'editor'] as const; // TypeScript feature 
+// roles.push('max') // its not allowed, because it must not be edited;
+const firstRole = roles[0];
+
+
+
+
+// Revisiting the "Record" Type
+let oneObj: Record<string, number | string>;
+
+
+
+
+// The `satisfies` keyword checks a value against a type
+// WITHOUT changing the inferred type of that value.
+
+// Without `satisfies` — type is widened
+const widened: Record<string, number> = {
+  entry1: 0.51,
+  entry2: -1.23,
+};
+
+// Allowed, but unsafe (key does not exist at runtime)
+widened.entry3;
+
+
+// With `satisfies` — type is validated but NOT widened
+const exact = {
+  entry1: 0.51,
+  entry2: -1.23,
+} satisfies Record<string, number>;
+
+// Allowed — exact keys are known
+exact.entry1;
+exact.entry2;
+
+// Compile-time error: Property 'entry3' does not exist
+// exact.entry3;
+
+
+// `satisfies` still enforces value types
+const invalid = {
+  entry1: 0.51,
+  // entry2: "wrong", // Type error: string is not assignable to number
+} satisfies Record<string, number>;
+
+
+
+
+
+
+
+/// Generics :
+// What & Why ?
+// Creating & Using Generic Types
+// Generic Constraints
+// A generic type we already know :
+let names: Array<string> = ['Max','Anna']; // or : string[]
+
+
+
+
+// Understanding Generic Types
+// types that need to work together with other types in order to accuratly describe a certain value type (combination of types, for example : Array<string> (the one is Array, the other is String))
+
+
+
+
+// Creating & Using a Generic Type
+type DataStore1 = {
+    [prop: string] : string | number; 
+}
+let store1: DataStore1 = {};
+store1.name = 'Max';
+// store1.isInstructor = true; // gives us an error because its accepted string and number, thats why we can do it into a generic type so it can be more flexible
+
+type DataStore2<T> = { // T for Type or multiple placeholders <T, U>
+    [prop: string] : T; 
+}
+let store2: DataStore2<string | boolean> = {};
+store2.name = 'Max';
+store2.isInstructor = true;
+let nameStore : DataStore2<string> = {};
+
+
+
+
+
+// Generic Functions & Inference
+function merge(a: any, b: any) {
+    return [a,b];
+}
+const ids = merge(1,2);
+// ids[0]. //typescript doesnt know what value it is (if number/string)
+
+// where generic features can help us (we can turn this function into generic one)
+function _merge<T>(a: T, b: T){
+    return [a,b];
+}
+const ids1 = _merge<number>(1,2); // or we can remove it, so it looks like :
+// const ids1 = _merge(1,2); // because TypeScript looks at the inputs and returns number
+
+
+
+
+
+
+// Working with Multiple Generic Parameters
+// if we want users to allow users to pass in different kinds of values 
+function __merge<T,U>(a: T, b: U){
+    return [a,b];
+}
+const _ids = __merge<number, string>(1,'Max');
+
+
+
+
+
+
+// Generics & Constraints
+
+function mergeObj(a : any,b : any){ // not ideal to use :any
+    return {...a, ...b};
+}
+const merged = mergeObj(1,2);
+console.log(merged) // u will see an empty object
+
+
+
+// what we can do is turn it into a generic function
+// Constraint using `extends`
+// T must have an `id` property
+function _mergeObj<T extends object>(a: T, b: T){ // we add a constraint "extends" (it should be some type of object if its set to object)
+    return {...a , ...b};
+}
+const _merged = _mergeObj({username: 'max'}, {age: 35});
+
+
+
+// Generic Types
+// Generics are placeholders for types that allow you to write reusable, type-safe code. They let you define a type, interface, or function that can work with any type, while preserving type information. Generics provide flexibility without losing the benefits of static type checking.
+
+
+// Constraints
+// Constraints are rules applied to generics to restrict the types that can be used. Using constraints, you can ensure that a generic type has certain properties or extends a specific base type. This allows you to write flexible code while preventing invalid types from being used, maintaining type safety.
+
+
+// Multiple Generics
+// Multiple generics allow you to define more than one type parameter in a type, interface, or function. Each type parameter can represent a different type, which allows you to combine, transform, or relate multiple types in a single definition.
+
+
+// Combining Constraints and Multiple Generics
+// You can apply constraints to one or more generic type parameters simultaneously. This ensures that each generic type adheres to specific requirements while still allowing flexibility and composability. It is particularly useful for operations that involve multiple types interacting with each other.
+
+
+// Mental Model
+// Generics = type placeholders for flexibility
+// Constraints = limits or requirements on the types that can be used
+// Multiple generics = handling multiple flexible types together
+// Combining constraints + multiple generics = flexible yet safe designs for complex type relationships
+
+
+
+// Working with Generic Classes & Interfaces
+class __User {
+    constructor(public id : string | number | object) {
+
+    }
+} // good place to turn this class into a generic
+
+
+class ___User<T> {
+    constructor(public id : T) {
+
+    }
+}
+const _user1 = new __User('i1');
+_user1.id
+
+// or we can build generic interfaces :
+interface _Role<T> {
+    // ...
+}
