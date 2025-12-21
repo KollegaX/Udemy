@@ -2,6 +2,9 @@
 // Typescript is a JavaScript superset
 // It's an "extension" to the JavaScript language
 // The core syntax & features are the same but extra features are added
+// TypeScript have also Built-In Utility for You
+
+
 // MOST IMPORTANTLY : Strict & static typing
 // example
 function deriveFinalPrice(inputPrice: number) {
@@ -20,7 +23,7 @@ console.log(deriveFinalPrice(+'23'));
 // to make it work in the browser, you need to compile it from Typescript to JavaScript
 // in the original website of TS, there is download process with instructions
 // npm is a package manage which comes with node.js
-// npm install -g typescript (you need to have node.js installed)
+// npm install -g TypeScript (you need to have node.js installed)
 
 /// About the course in TypeScript
 // Essentials :
@@ -174,7 +177,7 @@ userRole1 = 'guest'
 
 
 // Type Aliases & Custom Types
-// type // typescript keyword
+// type // TypeScript keyword
 type Role1  = 'admin' | 'editor' | 'guest' | 'reader'
 let userR : Role1 = 'admin';
 
@@ -355,8 +358,8 @@ let input = '';
 const didProvideInput = input ?? false; // searching for null and undefined
 
 
-// to configure how typescript will behavior :
-// tsc --init, then it creates a typescript configuration file
+// to configure how TypeScript will behavior :
+// tsc --init, then it creates a TypeScript configuration file
 
 // strict → always true (Turns on all important type checks)
 // target → modern JS (JS version TypeScript outputs)
@@ -801,7 +804,7 @@ class AuthenticatableUser implements Authenticatable{
 interface AuthenticatableAdmin extends Authenticatable {
     role : 'admin' | 'superadmin';
 }
-// interfaces is pure typescript feature and does not exist in JS and gets compiled away.
+// interfaces is pure TypeScript feature and does not exist in JS and gets compiled away.
 
 
 
@@ -1082,7 +1085,7 @@ function merge(a: any, b: any) {
     return [a,b];
 }
 const ids = merge(1,2);
-// ids[0]. //typescript doesnt know what value it is (if number/string)
+// ids[0]. // TypeScript doesnt know what value it is (if number/string)
 
 // where generic features can help us (we can turn this function into generic one)
 function _merge<T>(a: T, b: T){
@@ -1172,3 +1175,257 @@ _user1.id
 interface _Role<T> {
     // ...
 }
+
+
+
+
+/// Deriving Types From Types
+// typeof and keyof
+// Indexed Access Types & Mapped Types
+// Conditional Types
+// Built-in Utility Types
+
+const _userName = 'Max';
+console.log(typeof _userName); // javascript operator
+type UserName = typeof _userName;
+// because its const : UserName stores Max and not String, but if its (let) it stores String
+
+
+// "typeof" & A More Useful Example :
+const settings = {
+    difficulty : 'easy',
+    minLevel : 10,
+    didStart: false,
+    players: ['John', 'Jane']
+};
+
+type Settings = {
+    difficulty : string;
+    minLevel: number;
+    didStart: boolean;
+    players: string[];
+} // instead u can use the typeof operator and do :
+// type Settings = typeof settings;
+
+
+function loadData2(settings: Settings){ // or (s: typeof settings)
+    // ...
+}
+loadData2(settings)
+
+
+
+
+/// Extracting Keys with "keyof"
+type Yser = {name: string, age: number};
+type UserKeys = keyof Yser;
+
+let validKey: UserKeys;
+validKey = 'name';
+validKey = 'age';
+
+// where could u use that ?
+function getProp<T extends object, U extends keyof T>(obj : T, key: U) { // 
+    const val = obj[key]; // JS syntax extracting key from obj
+    if (val === undefined || val === null){
+        throw new Error('Accesing undefined or null value.')
+    }
+    return val;
+}
+
+const data2 = {id: 1, isStored: false, values: [1,-5,10]}
+const isStored = getProp(data2, 'isStored')
+const yser = {name : 'Max', age : 55};
+const val1 = getProp(yser, 'age');
+
+
+
+/// Understanding Indexed Access Types
+// const appUser = {
+//     name: 'max',
+//     age: 35,
+//     permissions : [{id: 'p1', title: 'Admin', descriptin: 'Admin access'}],
+// };
+// type AppUser = typeof appUser;
+// OR
+type AppUser = {
+    name: string;
+    age: number;
+    permission: {
+        id: string;
+        title: string;
+        description: string;
+    }[]
+}
+type Perms = AppUser['permission']; // not javascript, but we get the type that is stored from the permission;
+
+
+
+
+
+
+
+// Accessing Array Elements with Indexed Access Types :
+type Perms1 = AppUser['permission']; 
+type Perm = Perms1[number];
+
+type Names = string[];
+type Name = Names[number];
+
+
+
+
+
+
+
+
+// Introducing Mapped Types
+type Operations = {
+    add: (a: number, b: number) => number;
+    subtract:(a: number, b: number) => number;
+};
+
+type Results<T> = {
+    [K in keyof T]: number;
+}
+
+let mathOperations: Operations = {
+    add(a: number, b: number) {
+        return a + b;
+    },
+
+    subtract(a: number, b: number){
+        return a - b;
+    }
+}
+
+let mathResults: Results<Operations> = {
+    add: mathOperations.add(1,2),
+    subtract: mathOperations.subtract(5,2),
+};
+
+
+
+
+
+
+
+
+// Readonly Types & Optional Mapping
+// making properties optional :
+type Operations1 = {
+    add: (a: number, b: number) => number;
+    subtract:(a: number, b: number) => number;
+};
+
+// we can override the types when they are not readonly
+// so either we map them as readonly from Type Operations1 and down the way everything is readonly, or we can do it in the mapping
+// to remove the readonly in the mapping from example, we can do (-readonly)
+
+type Results1<T> = {
+    -readonly [K in keyof T]?: number; // question mark makes them optional, by doing (-?) it removes the optional flag when working with Types
+}
+
+let mathOperations1: Operations1 = {
+    add(a: number, b: number) {
+        return a + b;
+    },
+
+    subtract(a: number, b: number){
+        return a - b;
+    }
+}
+
+let mathResults1: Results1<Operations1> = {
+    add: mathOperations1.add(5,1),
+    subtract: mathOperations1.subtract(5,2)
+};
+// mathResults1.add = 10; // readonly we can't override or assign something
+
+
+
+
+
+
+
+
+/// Exploring Template Literal Types
+const mainUserName = 'Max';
+const greeting = `Hi there, ${mainUserName}.`; // JS Literals
+
+// Problems in TypeScript
+type ReadPermission = 'no-read' | 'read';
+type WritePermissions = 'no-write' | 'write';
+
+type FilePermissions = 'no-read-write' | 'read-no-write' | 'no-read-no-write' | 'read-write'; // we can do it like this, but there is template literal
+type FilePermission = `${ReadPermission}-${WritePermissions}`; // the same but with literal, because TypeScript features creates it (common way)
+
+type DataFile = {
+    data: string;
+    permissions: FilePermission;
+}
+
+type DataFileEventNames = `${keyof DataFile}Changed`;
+
+type DataFileEvents = {
+    [Key in DataFileEventNames] : () => void;
+};
+
+
+
+
+
+/// Introduction Conditional Types
+type StringArray = string[];
+// type ElementType<T extends any[]> = T[number];
+
+// type Example1 = ElementType<StringArray>;
+const text = 1;
+// type Example2 = ElementType<typeof text>;
+
+type GetElementType<T> = T extends any[] ? T[number] : never; //it can be returned T or never
+type Example1 = GetElementType<StringArray>;
+type Example2 = GetElementType<typeof text>;
+// advanced and niche features (when building libraries, but not quite in normal projects)
+
+
+
+
+
+// Conditional Types - Another Example
+function getFullName<T extends object>(person: T){
+    if ('firstName' in person && 'lastName' in person && person.firstName && person.lastName){
+        return `${person.firstName} ${person.lastName}`;
+    }
+
+    throw new Error('No first name and / or last name found.')
+}
+
+// OR
+
+type FullNamePerson = {firstName: string; lastName: string};
+type FullNameOrNothing<T> = T extends FullNamePerson ? string : never;
+function getFullName1<T extends object>(person: T): T extends FullNamePerson ? string : never{
+    if ('firstName' in person && 'lastName' in person && person.firstName && person.lastName){
+        return `${person.firstName} ${person.lastName}` as FullNameOrNothing<T>;
+    }
+    throw new Error('No first name and / or last name found.')
+}
+const name1 = getFullName1({}); // never
+const name2 = getFullName1({firstName: 'Max', lastName: 'Schwarz'}) // string
+
+
+
+
+
+
+// Making Sense of the 'infer' Keyword
+function add2(a: number, b: number) {
+    return a + b;
+}
+
+type AddFn = typeof add2;
+type ReturnValueType<T> = T extends (...args: any[]) => infer R ? R : T;  
+// infer is to use it in a conditional type in your condition to extract some "nested" type information from that type you are checking against and use it to return/changed it whatever we want
+type  AddFnReturnValueType = ReturnValueType<AddFn>
+
