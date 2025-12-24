@@ -603,7 +603,7 @@ console.log(jon,fred)
 // public and private 
 // there is also (protected), which works like private but also makes sure that the property may be accessed in classes that inherit the given class
 class Admin {
-    #role = 'ADMIN'; // you can use the JS private property in TS as well
+    // #role = 'ADMIN'; // you can use the JS private property in TS as well
 
     public hobbies : string[] = [];
 
@@ -1015,7 +1015,7 @@ const widened: Record<string, number> = {
 };
 
 // Allowed, but unsafe (key does not exist at runtime)
-widened.entry3;
+widened.entry3 ;
 
 
 // With `satisfies` — type is validated but NOT widened
@@ -1429,3 +1429,116 @@ type ReturnValueType<T> = T extends (...args: any[]) => infer R ? R : T;
 // infer is to use it in a conditional type in your condition to extract some "nested" type information from that type you are checking against and use it to return/changed it whatever we want
 type  AddFnReturnValueType = ReturnValueType<AddFn>
 
+
+
+
+// Decorators
+// What & Why
+// Creating Class, Method & Property Decorators
+// Decorator Factories
+// Official Decorators vs Experimental Decorators
+
+// What are decorators? And ECMAScript Decorators vs Experimental Decorators :
+// - Metaprogramming (code that interacts with other code) (used in many languages as well)
+// they start with @ symbol : @Length(10,20) and they attached to things title: string
+// TypeScript Supports Two Kinds of Decorators (2 different ways/approaches of writing decorators in TS)
+// in TypeScript u can build both : ECMAScript Decorators and TypeScript Experimental Decorators
+// the difference is that in ECMAScript they are JS Built-in features (not in every web-engine supported)
+// TS decorators built with different syntax and only available in TS
+
+// the decorators we built can only be used in conjunction with classes, their methods, their fields, or getters and setters in the end. So you can build decorators that can be attached to entire classes, to class methods, to class fields and/or getters and setters, but u cannot build a decorator that is attached to function/variables, because it's not part of a class. It is an object-oriented programming feature!
+
+
+
+
+// Building a decorator (target ES2022)
+// Decorators in JS are just functions, but its written in a certain way, receiving a certain amount of arguments and so on.
+// when building a ecmascript decorator u need to add 2 arguments, the first thing is the (target) which class its targeting, and the second is (context) object that gives you extra information about the thing you're attaching the decorator to.
+// Building a class decorator that edits a class
+function logger<T extends new (...args: any[]) => any >(target: T, ctx: ClassDecoratorContext){
+    console.log('logger decorator');
+    console.log(target);
+    console.log(ctx);
+
+    return class extends target {
+        constructor(...args: any[]){
+            super(...args);
+            console.log('class constructor');
+        }
+    }
+}
+
+@logger
+class Person {
+    // @fieldLogger
+    @replacer2(' ')
+    name = 'Max';
+
+    @autobind
+    greet(){
+        console.log('Hi, I am ' + this.name);
+    }
+}
+
+const max2 = new Person();
+max2.greet();
+console.log(max2);
+
+
+
+// Creating a method decorator
+function autobind(target: (...args: any[]) => any, ctx: ClassMethodDecoratorContext){
+    ctx.addInitializer(function(this: any) { // arrow function doesnt work cuz of arrow functions with this keyword
+        this[ctx.name] = this[ctx.name].bind(this);
+    })
+
+    return function(this: any) {
+        console.log('Executing original function');
+        target.apply(this);
+    }
+}
+
+const maxi = new Person();
+const greet = maxi.greet;
+greet();
+
+
+
+
+
+// Field Decorator
+// when creating a field decorator, always the target will be undefined, because u initialize it before 
+function fieldLogger(target : undefined,ctx: ClassFieldDecoratorContext) {
+    console.log(target);
+    console.log(ctx);
+
+    // u cannot return simply a value, u need to return a function
+    return (initialValue: any) => {
+        console.log(initialValue);
+        return '';
+    }
+}
+
+
+
+
+
+// Building Configurable Decorators with Factories
+function replacer2<T>(initValue: T){
+    return function replacerDecorator(target : undefined,ctx: ClassFieldDecoratorContext) {
+    console.log(target);
+    console.log(ctx);
+
+    // u cannot return simply a value, u need to return a function
+    return (initialValue: any) => {
+        console.log(initialValue);
+        return initValue;
+    }
+}
+}
+
+
+
+
+
+// Experimental Decorators (in most projects today if someone uses TS) 
